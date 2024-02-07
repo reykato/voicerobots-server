@@ -41,8 +41,8 @@ def gen_frames():
                 frame = np.frombuffer(buffer, dtype=np.uint8)
                 frame = frame.reshape(frame.shape[0], 1)
 
-                # frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-                # frame = cv2.flip(frame, 1)
+                frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                frame = cv2.flip(frame, 1)
 
                 if frame is not None:
                     ret, buffer_test = cv2.imencode('.jpg', frame)

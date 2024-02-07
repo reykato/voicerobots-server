@@ -1,5 +1,7 @@
 from flask import Flask, render_template, Response
 import numpy as np
+import os
+os.environ["OPENCV_IO_MAX_IMAGE_PIXELS"] = str(pow(2,40))
 import cv2
 import socket
 import pickle

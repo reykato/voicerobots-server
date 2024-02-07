@@ -7,7 +7,7 @@ import pickle
 #Initialize the Flask app
 app = Flask(__name__)
 
-host = '127.0.0.1' # empty string should specify localhost
+host = "127.0.0.1" # empty string should specify localhost
 port = 5005
 max_length = 65540
 
@@ -57,4 +57,4 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0", port=80)

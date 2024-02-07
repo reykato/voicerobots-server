@@ -7,8 +7,8 @@ import pickle
 #Initialize the Flask app
 app = Flask(__name__)
 
-host = '' # empty string should specify localhost
-port = 6969
+host = '127.0.0.1' # empty string should specify localhost
+port = 5005
 max_length = 65540
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -7,7 +7,7 @@ import pickle
 #Initialize the Flask app
 app = Flask(__name__)
 
-host = "127.0.0.1" # empty string should specify localhost
+host = "" # empty string should specify localhost
 port = 5005
 max_length = 65540
 

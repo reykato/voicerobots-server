@@ -39,14 +39,15 @@ def gen_frames():
                         buffer += data
 
                 frame = np.frombuffer(buffer, dtype=np.uint8)
-                frame = frame.reshape(frame.shape[0], 1)
+                # frame = frame.reshape(frame.shape[0], 1)
 
-                frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                # frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
                 # frame = cv2.flip(frame, 1)
 
                 if frame is not None:
-                    ret, buffer_test = cv2.imencode('.jpg', frame)
-                    frame_test = buffer_test.tobytes()
+                    # ret, buffer_test = cv2.imencode('.jpg', frame)
+                    # frame_test = buffer_test.tobytes()
+                    frame_test = frame.tobytes()
                 
                 if frame is not None and type(frame) == np.ndarray:
                     yield (b'--frame\r\n'

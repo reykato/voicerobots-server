@@ -41,9 +41,12 @@ def gen_frames():
 
                 frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
                 frame = cv2.flip(frame, 1)
+
+                frame_test = buffer.tobytes()
                 
                 if frame is not None and type(frame) == np.ndarray:
-                    yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + frame_test + b'\r\n')  # concat frame one by one and show result
                     if cv2.waitKey(1) == 27:
                         break
             

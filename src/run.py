@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import socket
 import pickle
+from videostreamhandler import VideoStreamHandler
 
 #Initialize the Flask app
 app = Flask(__name__)
@@ -18,38 +19,19 @@ frame_info = None
 buffer = None
 frame = None
 
+vsh = VideoStreamHandler(host, port)
+
+def main():
+    app.run(host="0.0.0.0", port=80, use_reloader=False)
+
 def gen_frames():
     while True:
-        data, address = sock.recvfrom(max_length)
-        
-        if len(data) < 100:
-            frame_info = pickle.loads(data)
-
-            if frame_info:
-                nums_of_packs = frame_info["packs"]
-
-                for i in range(nums_of_packs):
-                    data, address = sock.recvfrom(max_length)
-
-                    if i == 0:
-                        buffer = data
-                    else:
-                        buffer += data
-
-                frame = np.frombuffer(buffer, dtype=np.uint8)
-                # frame = frame.reshape(frame.shape[0], 1)
-
-                # frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-                # frame = cv2.flip(frame, 1)
-
-                # ret, buffer_test = cv2.imencode('.jpg', frame)
-                # frame_test = buffer_test.tobytes()
-                
-                if frame is not None and type(frame) == np.ndarray:
-                    frame_bytes = frame.tobytes()
-                    yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
-                    if cv2.waitKey(1) == 27:
-                        break
+        frame = vsh.get_frame()
+        if frame is not None and type(frame) == np.ndarray:
+            frame_bytes = frame.tobytes()
+            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
+            if cv2.waitKey(1) == 27:
+                break
             
 
 @app.route('/')
@@ -61,4 +43,4 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, use_reloader=False, threaded=False, processes=2)
+    main()

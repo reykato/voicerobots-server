@@ -15,9 +15,8 @@ vsh = VideoStreamHandler(host, port)
 
 def main():
     vsh.start()
-    # input("Stream started. Press ENTER to stop.")
-    vsh.stop()
     app.run(host="0.0.0.0", port=80, use_reloader=False)
+    vsh.stop()
 
 def gen_frames():
     while True:

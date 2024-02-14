@@ -6,7 +6,6 @@ import socket
 class VideoStreamHandler(StreamHandler):
     MAX_PACKET_SIZE = 65540
     frame = None
-    buffer = None
     sock = None
 
     def __init__(self, host, port):
@@ -25,6 +24,7 @@ class VideoStreamHandler(StreamHandler):
 
                 if frame_info:
                     nums_of_packs = frame_info["packs"]
+                    buffer = None
 
                     for i in range(nums_of_packs):
                         data, address = self.sock.recvfrom(self.MAX_PACKET_SIZE)

@@ -6,6 +6,7 @@ import socket
 class VideoStreamHandler(StreamHandler):
     MAX_PACKET_SIZE = 65540
     frame = None
+    frame_is_new = False
     sock = None
 
     def __init__(self, host, port):
@@ -34,9 +35,12 @@ class VideoStreamHandler(StreamHandler):
                         else:
                             buffer += data
 
+                    self.frame_is_new = True
                     self.frame = np.frombuffer(buffer, dtype=np.uint8)
     
     def get_frame(self):
-        return self.frame
+        return_value = self.frame if self.frame_is_new else None
+        self.frame_is_new = False
+        return return_value
                     
                     

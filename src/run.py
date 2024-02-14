@@ -1,7 +1,5 @@
 from flask import Flask, render_template, Response
 import numpy as np
-import os
-os.environ["OPENCV_IO_MAX_IMAGE_PIXELS"] = str(pow(2,40))
 import cv2
 import socket
 import pickle
@@ -44,14 +42,12 @@ def gen_frames():
                 # frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
                 # frame = cv2.flip(frame, 1)
 
-                if frame is not None:
-                    # ret, buffer_test = cv2.imencode('.jpg', frame)
-                    # frame_test = buffer_test.tobytes()
-                    frame_test = frame.tobytes()
+                # ret, buffer_test = cv2.imencode('.jpg', frame)
+                # frame_test = buffer_test.tobytes()
                 
                 if frame is not None and type(frame) == np.ndarray:
-                    yield (b'--frame\r\n'
-                           b'Content-Type: image/jpeg\r\n\r\n' + frame_test + b'\r\n')  # concat frame one by one and show result
+                    frame_bytes = frame.tobytes()
+                    yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
                     if cv2.waitKey(1) == 27:
                         break
             

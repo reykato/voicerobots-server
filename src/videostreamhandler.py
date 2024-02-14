@@ -6,6 +6,7 @@ import socket
 class VideoStreamHandler(StreamHandler):
     MAX_PACKET_SIZE = 65540
     frame = None
+    buffer = None
     sock = None
 
     def __init__(self, host, port):

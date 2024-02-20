@@ -22,7 +22,7 @@ class ControlStream(Stream):
                 # process the data from the queue
                 data = control_queue.get()
 
-                byte_stream = struct.pack('3d', *data)
+                byte_stream = struct.pack('2d', *data)
 
                 # Send data
                 self.socket.sendall(byte_stream)

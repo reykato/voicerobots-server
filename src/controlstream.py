@@ -29,10 +29,11 @@ class ControlStream(Stream):
                 print(f"Received: {received_data.decode()}")
 
                 # Wait for some time before sending the next message
-                time.sleep(1)
+                # time.sleep(1)
             else:
                 # sleep for a while to avoid busy-waiting
-                time.sleep(1)
+                # time.sleep(1)
+                pass
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

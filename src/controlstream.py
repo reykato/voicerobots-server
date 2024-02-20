@@ -5,7 +5,8 @@ import struct
 from stream import Stream
 
 class ControlStream(Stream):
-    socket = None
+    server_socket = None
+    client_socket = None
 
     def __init__(self, host, port, control_queue):
         self.host = host
@@ -25,10 +26,10 @@ class ControlStream(Stream):
                 byte_stream = struct.pack('2d', *data)
 
                 # Send data
-                self.socket.sendall(byte_stream)
+                self.server_socket.sendall(byte_stream)
 
                 # Wait for a response
-                received_data = self.socket.recv(1024)
+                received_data = self.server_socket.recv(1024)
                 print(f"Received: {received_data.decode()}")
 
                 # Wait for some time before sending the next message
@@ -39,17 +40,15 @@ class ControlStream(Stream):
                 pass
 
     def _before_starting(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
-            try:
-                self.socket.connect((self.host, self.port))
-                break  # Exit the loop if connection succeeds
-            except socket.error as e:
-                print(f"Failed to connect: {e}, retrying...")
-                # time.sleep(1)  # Wait for 1 second before trying again
+        socket.timeout(0.005) # socket will stop waiting for packets after 5ms
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.bind((self.host, self.port))
+        self.server_socket.listen()
+        self.client_socket, _ = self.server_socket.accept()
+        print("Client Connected!")
 
     def _after_stopping(self):
-        self.socket.close()
+        self.server_socket.close()
 
     def start(self):
         """

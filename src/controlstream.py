@@ -25,7 +25,7 @@ class ControlStream(Stream):
                 byte_stream = struct.pack('2d', *data)
 
                 # Send data
-                self.socket.sendto(byte_stream, (self.host, self.port))
+                self.socket.sendall(byte_stream)
 
                 # Wait for a response
                 received_data = self.socket.recv(1024)
@@ -39,8 +39,8 @@ class ControlStream(Stream):
                 pass
 
     def _before_starting(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((self.host, self.port))
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((self.host, self.port))
 
     def _after_stopping(self):
         self.socket.close()

@@ -6,16 +6,12 @@ from stream import Stream
 class ControlStream(Stream):
     socket = None
 
-    def __init__(self, host, port, control_queue):
-        super().__init__(host, port)
-        self.control_queue = control_queue
-
-    def _handle_stream(self):
+    def _handle_stream(self, control_queue):
         while not self.stop_event.is_set():
             # check if there is data in the queue
-            if not self.control_queue.empty():
+            if not control_queue.empty():
                 # process the data from the queue
-                data = self.control_queue.get()
+                data = control_queue.get()
 
                 # Send data
                 self.socket.sendall(data.encode())

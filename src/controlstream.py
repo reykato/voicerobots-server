@@ -25,7 +25,7 @@ class ControlStream(Stream):
                 byte_stream = struct.pack('2d', *data)
 
                 # Send data
-                self.socket.sendall(byte_stream)
+                self.socket.sendto(byte_stream, (self.host, self.port))
 
                 # Wait for a response
                 received_data = self.socket.recv(1024)

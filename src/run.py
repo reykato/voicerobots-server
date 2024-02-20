@@ -33,7 +33,7 @@ def gen_frames():
 @socketio.on('json')
 def handle_message(json):
     # separate x and y from the json into two variables for easier use
-    data = [float(json['x']) / 100.0, float(json['y']) / 100.0]
+    data = (float(json['x']) / 100.0, float(json['y']) / 100.0)
     control_queue.put(data)
 
 @flask_instance.route('/')
@@ -46,8 +46,10 @@ def video_feed():
 
 def main():
     vsh.start()
+    cs.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
     vsh.stop()
+    cs.stop()
 
 if __name__ == "__main__":
     main()

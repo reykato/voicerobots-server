@@ -3,7 +3,7 @@ import threading
 class StreamHandler():
     def __init__(self, host: str, port: int):
         """
-        Class for handling UDP streams.
+        Class for handling IP streams.
 
         Parameters:
         - host (str): Address of the receiving machine.
@@ -12,8 +12,8 @@ class StreamHandler():
         (e.g. 5100)
         """
 
-        self.HOST = host
-        self.PORT = port
+        self.host = host
+        self.port = port
 
         self.stop_event = threading.Event()
         self.loop_thread = threading.Thread(target=self._handle_stream)

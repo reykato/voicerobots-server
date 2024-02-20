@@ -11,7 +11,7 @@ class VideoStreamHandler(StreamHandler):
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((self.HOST, self.PORT))
+        self.socket.bind((self.host, self.port))
 
     def _handle_stream(self):
         while not self.stop_event.is_set():

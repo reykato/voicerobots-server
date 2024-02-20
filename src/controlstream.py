@@ -9,6 +9,7 @@ class ControlStream(Stream):
     def __init__(self, host, port, control_queue):
         self.host = host
         self.port = port
+        self.control_queue = control_queue
 
         self.stop_event = threading.Event()
         self.loop_thread = threading.Thread(target=self._handle_stream, args=(control_queue,))

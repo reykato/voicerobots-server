@@ -10,15 +10,15 @@ from controlstream import ControlStream
 flask_instance = Flask(__name__)
 socketio = SocketIO(flask_instance) # websocket
 
-HOST = "localhost"
+VS_HOST = "localhost"
 CS_HOST = "68.162.66.104"
 VSH_PORT = 5005
 CS_PORT = 5006
 
 control_queue = queue.Queue()
 
-vsh = VideoStreamHandler(HOST, VSH_PORT)
-cs = ControlStream(HOST, CS_PORT, control_queue)
+vsh = VideoStreamHandler(VS_HOST, VSH_PORT)
+cs = ControlStream(CS_HOST, CS_PORT, control_queue)
 
 
 def gen_frames():

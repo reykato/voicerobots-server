@@ -26,10 +26,10 @@ class ControlStream(Stream):
                 byte_stream = struct.pack('2d', *data)
 
                 # Send data
-                self.server_socket.sendall(byte_stream)
+                self.client_socket.sendall(byte_stream)
 
                 # Wait for a response
-                received_data = self.server_socket.recv(1024)
+                received_data = self.client_socket.recv(1024)
                 print(f"Received: {received_data.decode()}")
 
                 # Wait for some time before sending the next message
@@ -44,6 +44,7 @@ class ControlStream(Stream):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
+
         self.client_socket, _ = self.server_socket.accept()
         print("Client Connected!")
 

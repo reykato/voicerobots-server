@@ -6,6 +6,13 @@ from stream import Stream
 class ControlStream(Stream):
     socket = None
 
+    def __init__(self, host, port, control_queue):
+        self.host = host
+        self.port = port
+
+        self.stop_event = threading.Event()
+        self.loop_thread = threading.Thread(target=self._handle_stream, args=(control_queue,))
+
     def _handle_stream(self, control_queue):
         while not self.stop_event.is_set():
             # check if there is data in the queue

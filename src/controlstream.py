@@ -46,7 +46,7 @@ class ControlStream(Stream):
                 break  # Exit the loop if connection succeeds
             except socket.error as e:
                 print(f"Failed to connect: {e}, retrying...")
-                time.sleep(1)  # Wait for 1 second before trying again
+                # time.sleep(1)  # Wait for 1 second before trying again
 
     def _after_stopping(self):
         self.socket.close()

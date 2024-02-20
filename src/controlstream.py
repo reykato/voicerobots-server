@@ -29,8 +29,8 @@ class ControlStream(Stream):
                 self.client_socket.sendall(byte_stream)
 
                 # Wait for a response
-                received_data = self.client_socket.recv(1024)
-                print(f"Received: {received_data.decode()}")
+                # received_data = self.client_socket.recv(1024)
+                # print(f"Received: {received_data.decode()}")
 
                 # Wait for some time before sending the next message
                 # time.sleep(1)

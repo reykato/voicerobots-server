@@ -22,7 +22,7 @@ class ControlStream(Stream):
                 data = control_queue.get()
 
                 # Send data
-                self.socket.sendall(data.encode())
+                self.socket.sendall(bytes(data))
 
                 # Wait for a response
                 received_data = self.socket.recv(1024)

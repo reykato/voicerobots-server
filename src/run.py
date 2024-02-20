@@ -10,7 +10,7 @@ from controlstream import ControlStream
 flask_instance = Flask(__name__)
 socketio = SocketIO(flask_instance) # websocket
 
-HOST = "" # empty string should specify localhost
+HOST = "localhost"
 CS_HOST = "68.162.66.104"
 VSH_PORT = 5005
 CS_PORT = 5006

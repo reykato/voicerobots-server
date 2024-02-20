@@ -40,7 +40,13 @@ class ControlStream(Stream):
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
+        while True:
+            try:
+                self.socket.connect((self.host, self.port))
+                break  # Exit the loop if connection succeeds
+            except socket.error as e:
+                print(f"Failed to connect: {e}, retrying...")
+                time.sleep(1)  # Wait for 1 second before trying again
 
     def _after_stopping(self):
         self.socket.close()

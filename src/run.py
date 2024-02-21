@@ -33,8 +33,9 @@ def gen_frames():
 @socketio.on('json')
 def handle_message(json):
     # separate x and y from the json into two variables for easier use
-    data = (float(json['x']) / 100.0, float(json['y']) / 100.0)
-    control_queue.put(data)
+    data = [float(json['x']) / 100.0, float(json['y']) / 100.0]
+    np_data = np.array(data, dtype=np.float32)
+    control_queue.put(np_data)
 
 @flask_instance.route('/')
 def index():

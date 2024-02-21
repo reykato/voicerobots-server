@@ -1,7 +1,6 @@
 from time import time
 import socket
 import threading
-import struct
 from stream import Stream
 
 class ControlStream(Stream):
@@ -23,7 +22,8 @@ class ControlStream(Stream):
                 # process the data from the queue
                 data = control_queue.get()
 
-                byte_stream = struct.pack('2d', *data)
+                # byte_stream = struct.pack('2d', *data)
+                byte_stream = data.tobytes()
 
                 # Send data
                 self.client_socket.sendall(byte_stream)

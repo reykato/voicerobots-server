@@ -1,0 +1,36 @@
+*
+{
+	box-sizing: border-box;
+}
+
+body
+{
+	margin: 0px;
+	padding: 0px;
+	font-family: monospace;
+  background-color: black;
+}
+
+.row
+{
+	display: inline-flex;
+	clear: both;
+}
+
+.columnLateral
+{
+  float: left;
+  width: 15%;
+  min-width: 300px;
+}
+
+.columnCetral
+{
+  float: left;
+  width: 70%;
+  min-width: 300px;
+}
+
+#joyDiv {
+  color: white;
+}

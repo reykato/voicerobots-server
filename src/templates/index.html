@@ -61,15 +61,15 @@
             };
             var Joy = new JoyStick('joyDiv', joyParam);
 
-            {% comment %} var input_pos_x = document.getElementById("PosX");
+            /*var input_pos_x = document.getElementById("PosX");
             var input_pos_y = document.getElementById("PosY");
-            var direction = document.getElementById("Direction"); {% endcomment %}
+            var direction = document.getElementById("Direction");*/
             var X = document.getElementById("X");
             var Y = document.getElementById("Y");
 
-            {% comment %} setInterval(function(){ input_pos_x.value=Joy.GetPosX(); }, 50);
+            /*setInterval(function(){ input_pos_x.value=Joy.GetPosX(); }, 50);
             setInterval(function(){ input_pos_y.value=Joy.GetPosY(); }, 50);
-            setInterval(function(){ direction.value=Joy.GetDir(); }, 50); {% endcomment %}
+            setInterval(function(){ direction.value=Joy.GetDir(); }, 50);*/
             setInterval(function(){ X.value=Joy.GetX(); }, 50);
             setInterval(function(){ Y.value=Joy.GetY(); }, 50);
 

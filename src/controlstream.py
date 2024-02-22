@@ -33,15 +33,14 @@ class ControlStream(Stream):
     def _wait_for_connection(self):
         print("Waiting for connection...")
         self.client_socket, _ = self.server_socket.accept()
+        print("Client Connected!")
 
     def _before_starting(self):
         socket.timeout(0.01) # socket will stop waiting for packets after 10ms
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()
-
-        self.client_socket, _ = self.server_socket.accept()
-        print("Client Connected!")
+        self._wait_for_connection()
 
     def _after_stopping(self):
         self.server_socket.close()

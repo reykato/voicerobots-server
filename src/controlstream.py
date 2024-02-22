@@ -1,4 +1,4 @@
-from time import time
+import time
 import socket
 import threading
 from stream import Stream
@@ -21,26 +21,21 @@ class ControlStream(Stream):
             if not control_queue.empty():
                 # process the data from the queue
                 data = control_queue.get()
-
-                # byte_stream = struct.pack('2d', *data)
                 byte_stream = data.tobytes()
-
-                # Send data
-                self.client_socket.sendall(byte_stream)
-
-                # Wait for a response
-                # received_data = self.client_socket.recv(1024)
-                # print(f"Received: {received_data.decode()}")
-
-                # Wait for some time before sending the next message
-                # time.sleep(1)
+                try:
+                    self.client_socket.sendall(byte_stream)
+                except socket.error as e:
+                    print(f"Error '{e.args[0]}' occurred. Assuming connection was lost.")
+                    self._wait_for_connection()
             else:
-                # sleep for a while to avoid busy-waiting
-                # time.sleep(1)
-                pass
+                time.sleep(0.01)
+
+    def _wait_for_connection(self):
+        print("Waiting for connection...")
+        self.client_socket, _ = self.server_socket.accept()
 
     def _before_starting(self):
-        socket.timeout(0.005) # socket will stop waiting for packets after 5ms
+        socket.timeout(0.01) # socket will stop waiting for packets after 10ms
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
         self.server_socket.listen()

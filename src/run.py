@@ -82,11 +82,11 @@ def transcription_feed():
 def main():
     vsh.start()
     cs.start()
-    aus.start()
+    # aus.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
     vsh.stop()
     cs.stop()
-    aus.stop()
+    # aus.stop()
 
 if __name__ == "__main__":
     main()

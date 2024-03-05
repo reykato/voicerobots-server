@@ -15,7 +15,7 @@ class LidarStreamHandler(StreamHandler):
             try:
                 received_data = self.socket.recv(1024)
                 if not received_data is None:
-                    decoded_data = np.frombuffer(received_data, dtype=np.float32)
+                    decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
                     for point in decoded_data:
                         print(f"decoded point:{point}")
             except socket.error as e:

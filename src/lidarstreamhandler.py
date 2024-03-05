@@ -30,7 +30,7 @@ class LidarStreamHandler(StreamHandler):
                     except:
                         continue
                     for point in decoded_data:
-                        print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
+                        # print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
                         self.point_buffer.put(point)
             except socket.error as e:
                 received_data = None
@@ -61,8 +61,11 @@ class LidarStreamHandler(StreamHandler):
         img = img.reshape(self.fig.canvas.get_width_height()[::1] + (3,))
         self.frame = plot.plot(img, format='jpeg')
         self.frame_is_new = True
+        print("generated frame")
 
     def get_frame(self):
         return_value = self.frame if self.frame_is_new else None
+        if self.frame is None:
+            print("frame is none")
         self.frame_is_new = False
         return return_value

@@ -6,8 +6,9 @@ import whisper
 import torch
 from flask_socketio import SocketIO
 from videostreamhandler import VideoStreamHandler
-from controlstream import ControlStream
+from controlstreamhandler import ControlStream
 from audiostreamhandler import AudioStreamHandler
+from lidarstreamhandler import LidarStreamHandler
 
 
 flask_instance = Flask(__name__)
@@ -17,13 +18,15 @@ HOST_IP = "" # empty string for all available interfaces
 VSH_PORT = 5005
 CS_PORT = 5006
 AUS_PORT = 5007
+LSH_PORT = 5008
 
 control_queue = queue.Queue()
 model = whisper.load_model("tiny.en")
 
 vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
-cs = ControlStream(HOST_IP, CS_PORT, control_queue)
+csh = ControlStream(HOST_IP, CS_PORT, control_queue)
 aus = AudioStreamHandler(HOST_IP, AUS_PORT)
+lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 
 def gen_frames():
     while True:
@@ -81,12 +84,17 @@ def transcription_feed():
 
 def main():
     vsh.start()
-    cs.start()
+    csh.start()
     # aus.start()
-    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
-    vsh.stop()
-    cs.stop()
-    # aus.stop()
+    lsh.start()
+    try:
+        flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
+    except KeyboardInterrupt:
+        vsh.stop()
+        csh.stop()
+        # aus.stop()
+        lsh.stop()
+
 
 if __name__ == "__main__":
     main()

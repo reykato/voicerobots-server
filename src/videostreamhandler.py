@@ -35,6 +35,9 @@ class VideoStreamHandler(StreamHandler):
                     self.frame_is_new = True
                     self.frame = np.frombuffer(buffer, dtype=np.uint8)
 
+    def _after_stopping(self):
+        self.socket.close()
+
     def get_frame(self):
         return_value = self.frame if self.frame_is_new else None
         self.frame_is_new = False

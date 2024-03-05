@@ -39,6 +39,7 @@ class LidarStreamHandler(StreamHandler):
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}', reconnecting...")
                     self._connect_to_server()
+            self._gen_frame()
 
     def _draw_line(self, line):
         scan = []
@@ -55,7 +56,7 @@ class LidarStreamHandler(StreamHandler):
         ax = plot.subplot(111, projection="polar")
         line = ax.scatter([0, 0], [0, 0], s=5, c=[0, 50],
                            cmap=plot.cm.Greys_r, lw=0)
-        self.ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
+        ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
 
     def _gen_frame(self):
         self.fig.canvas.draw()

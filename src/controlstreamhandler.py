@@ -44,6 +44,8 @@ class ControlStream(Stream):
 
     def _after_stopping(self):
         self.server_socket.close()
+        if self.client_socket is not None:
+            self.client_socket.close()
 
     def start(self):
         """

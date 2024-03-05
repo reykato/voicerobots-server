@@ -87,14 +87,15 @@ def main():
     csh.start()
     # aus.start()
     lsh.start()
-    try:
-        flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
-    except KeyboardInterrupt:
-        vsh.stop()
-        csh.stop()
-        # aus.stop()
-        lsh.stop()
+    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
+    
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        vsh.stop()
+        csh.stop()
+        aus.stop()
+        lsh.stop()

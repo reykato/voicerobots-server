@@ -25,6 +25,7 @@ class AudioStreamHandler(StreamHandler):
         self.stream_play.stop_stream()
         self.stream_play.close()
         self.play.terminate()
+        self.socket.close()
 
     def get_audio(self):
         return_value = self.frame if self.frame_is_new else None

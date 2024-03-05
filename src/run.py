@@ -52,6 +52,16 @@ def gen_audio_to_text():
                 print(result['text'])
                 yield result["text"]
 
+def gen_lidar():
+    while True:
+        frame = lsh.get_frame()
+        if frame is not None:
+            #print("frame get")
+            frame_bytes = frame.tobytes()
+            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
+            if cv2.waitKey(1) == 27:
+                break
+
 def gen_audio():
     while True:
         audio = aus.get_audio()
@@ -72,6 +82,10 @@ def index():
 @flask_instance.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@flask_instance.route('/lidar_feed')
+def lidar_feed():
+    return Response(gen_lidar(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @flask_instance.route('/audio_feed')
 def audio_feed():

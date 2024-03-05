@@ -1,11 +1,21 @@
 import socket
+import io
+import queue
 from streamhandler import StreamHandler
 import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plot
+import matplotlib.animation as animation
 
 class LidarStreamHandler(StreamHandler):
+    frame = None
+
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
+        self.point_buffer = queue.Queue()
+        self._setup_mpl()
 
     def _after_stopping(self):
         self.socket.close()
@@ -21,8 +31,38 @@ class LidarStreamHandler(StreamHandler):
                         continue
                     for point in decoded_data:
                         print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
+                        self.point_buffer.put(point)
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}', reconnecting...")
                     self._connect_to_server()
+
+    def _draw_line(self, line):
+        scan = []
+        for _ in range(137):
+            scan += self.point_buffer.get()
+        offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
+        line.set_offsets(offsets)
+        intens = np.array([meas[0] for meas in scan])
+        line.set_array(intens)
+        return line,
+
+    def _setup_mpl(self):
+        self.fig = plot.figure()
+        ax = plot.subplot(111, projection="polar")
+        line = ax.scatter([0, 0], [0, 0], s=5, c=[0, 50],
+                           cmap=plot.cm.Greys_r, lw=0)
+        self.ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
+
+    def _gen_frame(self):
+        self.fig.canvas.draw()
+        img = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
+        img = img.reshape(self.fig.canvas.get_width_height()[::1] + (3,))
+        self.frame = plot.plot(img, format='jpeg')
+        self.frame_is_new = True
+
+    def get_frame(self):
+        return_value = self.frame if self.frame_is_new else None
+        self.frame_is_new = False
+        return return_value

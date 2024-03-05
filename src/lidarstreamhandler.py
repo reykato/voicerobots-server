@@ -42,6 +42,7 @@ class LidarStreamHandler(StreamHandler):
             self._gen_frame()
 
     def _draw_line(self, line):
+        print("draw line called")
         scan = []
         for _ in range(137):
             scan += self.point_buffer.get()
@@ -59,6 +60,7 @@ class LidarStreamHandler(StreamHandler):
         ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
 
     def _gen_frame(self):
+        print("gen frame called")
         self.fig.canvas.draw()
         img = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
         img = img.reshape(self.fig.canvas.get_width_height()[::1] + (3,))

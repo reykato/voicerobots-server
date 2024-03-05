@@ -13,7 +13,7 @@ class LidarStreamHandler(StreamHandler):
     def _handle_stream(self):
         while not self.stop_event.is_set():
             try:
-                received_data = self.socket.recv(4096)
+                received_data, _ = self.socket.recvfrom(8192)
                 if not received_data is None:
                     try:
                         decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
@@ -26,4 +26,3 @@ class LidarStreamHandler(StreamHandler):
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}', reconnecting...")
                     self._connect_to_server()
-

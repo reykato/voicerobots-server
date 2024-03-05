@@ -16,7 +16,8 @@ class LidarStreamHandler(StreamHandler):
                 received_data = self.socket.recv(1024)
                 if not received_data is None:
                     decoded_data = np.frombuffer(received_data, dtype=np.float32)
-                    print(f"decoded data:{decoded_data}")
+                    for point in decoded_data:
+                        print(f"decoded point:{point}")
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':

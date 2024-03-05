@@ -63,8 +63,9 @@ class LidarStreamHandler(StreamHandler):
         print("gen frame called")
         self.fig.canvas.draw()
         img = np.fromstring(self.fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-        img = img.reshape(self.fig.canvas.get_width_height()[::1] + (3,))
-        self.frame = plot.plot(img, format='jpeg')
+        # img = img.reshape(self.fig.canvas.get_width_height()[::1] + (3,))
+        # self.frame = plot.plot(img, format='jpeg')
+        self.frame = img.tobytes()
         self.frame_is_new = True
         print("generated frame")
 

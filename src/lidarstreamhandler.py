@@ -9,12 +9,14 @@ import matplotlib.pyplot as plot
 import matplotlib.animation as animation
 
 class LidarStreamHandler(StreamHandler):
-    frame = None
+    
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
         self.point_buffer = queue.Queue()
+        self.frame = None
+        self.frame_is_new = False
         self._setup_mpl()
 
     def _after_stopping(self):

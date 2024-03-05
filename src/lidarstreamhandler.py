@@ -57,7 +57,7 @@ class LidarStreamHandler(StreamHandler):
         ax = plot.subplot(111, projection="polar")
         line = ax.scatter([0, 0], [0, 0], s=5, c=[0, 50],
                            cmap=plot.cm.Greys_r, lw=0)
-        ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
+        self.ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
 
     def _gen_frame(self):
         print("gen frame called")

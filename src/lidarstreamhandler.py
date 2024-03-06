@@ -50,7 +50,7 @@ class LidarStreamHandler(StreamHandler):
 
         self.figure = plt.figure(figsize=(6, 6))
         self.ax = plt.subplot(111, projection='polar')
-        self.line1, = self.ax.scatter([0, 0], [0, 0], s=5, c=[0, 50], cmap=plt.cm.Greys_r, lw=0)
+        self.line1 = self.ax.scatter([0, 0], [0, 0], s=5, c=[0, 50], cmap=plt.cm.Greys_r, lw=0)
 
     # def _gen_frame(self):
     #     print("gen frame called")

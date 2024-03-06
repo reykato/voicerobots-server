@@ -51,6 +51,7 @@ class LidarStreamHandler(StreamHandler):
         self.figure = plt.figure(figsize=(6, 6))
         self.ax = plt.subplot(111, projection='polar')
         self.line1 = self.ax.scatter([0, 0], [0, 0], s=5, c=[0, 50], cmap=plt.cm.Greys_r, lw=0)
+        self.line1.
 
     # def _gen_frame(self):
     #     print("gen frame called")
@@ -67,12 +68,14 @@ class LidarStreamHandler(StreamHandler):
             scan.append(self.point_buffer.get())
 
         if scan != []:
-            new_x = [point[2] * np.cos(np.radians(point[1])) for point in scan]
-            new_y = [point[2] * np.sin(np.radians(point[1])) for point in scan]
+            offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
+            self.line1.set_offsets(offsets)
+            intens = np.array([meas[0] for meas in scan])
+            self.line1.set_array(intens)
         
             # updating data values
-            self.line1.set_xdata(new_x)
-            self.line1.set_ydata(new_y)
+            # self.line1.set_xdata(new_x)
+            # self.line1.set_ydata(new_y)
 
             frame_obj = io.BytesIO()
         

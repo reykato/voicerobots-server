@@ -51,6 +51,9 @@ class LidarStreamHandler(StreamHandler):
         self.figure = plt.figure(figsize=(6, 6))
         self.ax = plt.subplot(111, projection='polar')
         self.line1 = self.ax.scatter([0, 0], [0, 0], s=5, c=[0, 50], cmap=plt.cm.Greys_r, lw=0)
+        self.ax.set_ylim(0,8000)
+        self.ax.set_xticks([])
+        self.ax.set_yticks([])
 
     # def _gen_frame(self):
     #     print("gen frame called")
@@ -92,6 +95,7 @@ class LidarStreamHandler(StreamHandler):
 
             self.frame = frame
             self.frame_is_new = True
+            print("lidar frame generated!!")
 
     def get_frame(self):
         return_value = np.asarray(self.frame) if self.frame_is_new else None

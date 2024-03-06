@@ -26,7 +26,7 @@ class LidarStreamHandler(StreamHandler):
             time_elapsed = time.time() - self.prev_time
             try:
                 received_data, _ = self.socket.recvfrom(8192)
-                if len(self.point_buffer) > 300:
+                if self.point_buffer.qsize() > 300:
                     self.point_buffer = queue.Queue()
                 if not received_data is None:
                     try:

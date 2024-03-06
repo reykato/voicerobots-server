@@ -1,6 +1,7 @@
 import socket
 import io
 import queue
+import time
 from streamhandler import StreamHandler
 import numpy as np
 import matplotlib
@@ -21,16 +22,19 @@ class LidarStreamHandler(StreamHandler):
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
+            time_elapsed = time.time() - self.prev_time
             try:
                 received_data, _ = self.socket.recvfrom(8192)
                 if not received_data is None:
-                    try:
-                        decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
-                    except:
-                        continue
-                    for point in decoded_data:
-                        # print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
-                        self.point_buffer.put(point)
+                    if time_elapsed > 0.5:
+                        self.prev_time = time.time()
+                        try:
+                            decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
+                        except:
+                            continue
+                        for point in decoded_data:
+                            # print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
+                            self.point_buffer.put(point)
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':

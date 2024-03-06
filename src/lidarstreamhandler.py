@@ -15,6 +15,7 @@ class LidarStreamHandler(StreamHandler):
         self.point_buffer = queue.Queue()
         self.frame = None
         self.frame_is_new = False
+        self.prev_time = time.time()
         self._setup_mpl()
 
     def _after_stopping(self):
@@ -25,48 +26,31 @@ class LidarStreamHandler(StreamHandler):
             time_elapsed = time.time() - self.prev_time
             try:
                 received_data, _ = self.socket.recvfrom(8192)
+                if len(self.point_buffer) > 300:
+                    self.point_buffer = queue.Queue()
                 if not received_data is None:
-                    if time_elapsed > 0.5:
-                        self.prev_time = time.time()
-                        try:
-                            decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
-                        except:
-                            continue
-                        for point in decoded_data:
-                            # print(f"quality: {point[0]}, angle: {point[1]}, distance: {point[2]}")
-                            self.point_buffer.put(point)
+                    try:
+                        decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
+                    except:
+                        continue
+                    for point in decoded_data:
+                        self.point_buffer.put(point)
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':
-                    print(f"Error: '{e.args[0]}', reconnecting...")
-                    self._connect_to_server()
-            self._gen_frame()
-
-    # def _setup_mpl(self):
-    #     self.fig = plot.figure()
-    #     ax = plot.subplot(111, projection="polar")
-    #     line = ax.scatter([0, 0], [0, 0], s=5, c=[0, 50],
-    #                        cmap=plot.cm.Greys_r, lw=0)
-    #     self.ani = animation.FuncAnimation(self.fig, self._draw_line, fargs=(line), interval=40, cache_frame_data=False)
+                    print(f"Error: '{e.args[0]}'")
+            if time_elapsed > .5:
+                self.prev_time = time.time()
+                self._gen_frame()
 
     def _setup_mpl(self):
-        plt.ion()
-
         self.figure = plt.figure(figsize=(6, 6))
         self.ax = plt.subplot(111, projection='polar')
-        self.line1 = self.ax.scatter([0, 0], [0, 0], s=5, c=[0, 50], cmap=plt.cm.Greys_r, lw=0)
-        self.ax.set_ylim(0,8000)
+        self.line1 = self.ax.scatter([0, 0], [0, 0], s=8, c=[0, 8000], cmap='viridis', lw=0)
+        self.ax.set_ylim(0,6000)
+        self.ax.set_facecolor("black")
         self.ax.set_xticks([])
         self.ax.set_yticks([])
-
-    # def _gen_frame(self):
-    #     print("gen frame called")
-    #     self.fig.canvas.draw()
-    #     img = np.frombuffer(self.fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-    #     self.frame = img.reshape(*reversed(self.fig.canvas.get_width_height()), 3)
-
-    #     self.frame_is_new = True
-    #     print("generated frame")
         
     def _gen_frame(self):
         scan = []
@@ -76,12 +60,8 @@ class LidarStreamHandler(StreamHandler):
         if scan != []:
             offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
             self.line1.set_offsets(offsets)
-            intens = np.array([meas[0] for meas in scan])
-            self.line1.set_array(intens)
-        
-            # updating data values
-            # self.line1.set_xdata(new_x)
-            # self.line1.set_ydata(new_y)
+            dist = np.array([meas[2] for meas in scan])
+            self.line1.set_array(dist)
 
             frame_obj = io.BytesIO()
         
@@ -91,13 +71,8 @@ class LidarStreamHandler(StreamHandler):
             # save figure as a jpeg image
             plt.savefig(frame_obj, format='jpeg')
             frame_obj.seek(0)
-            frame = frame_obj.read()
-            # This will run the GUI event
-            # loop until all UI events
-            # currently waiting have been processed
-            self.figure.canvas.flush_events()
 
-            self.frame = frame
+            self.frame = frame_obj.read()
             self.frame_is_new = True
             print("lidar frame generated!!")
 

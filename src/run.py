@@ -56,7 +56,6 @@ def gen_lidar_frame():
     while True:
         frame = lsh.get_frame()
         if frame is not None:
-            #print("frame get")
             frame_bytes = frame.tobytes()
             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
 

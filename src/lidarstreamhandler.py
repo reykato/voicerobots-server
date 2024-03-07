@@ -13,6 +13,7 @@ class LidarStreamHandler(StreamHandler):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
         self.point_buffer = queue.Queue()
+        self.bg = None
         self.frame = None
         self.frame_is_new = False
         self.prev_time = time.time()
@@ -23,7 +24,7 @@ class LidarStreamHandler(StreamHandler):
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
-            time_elapsed = time.time() - self.prev_time
+            # time_elapsed = time.time() - self.prev_time
             try:
                 received_data, _ = self.socket.recvfrom(8192)
                 if self.point_buffer.qsize() > 300:
@@ -39,18 +40,21 @@ class LidarStreamHandler(StreamHandler):
                 received_data = None
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}'")
-            if time_elapsed > .5:
-                self.prev_time = time.time()
-                self._gen_frame()
+            # if time_elapsed > .25:
+                # self.prev_time = time.time()
+            self._gen_frame()
 
     def _setup_mpl(self):
         self.figure = plt.figure(figsize=(6, 6))
         self.ax = plt.subplot(111, projection='polar')
-        self.line1 = self.ax.scatter([0, 0], [0, 0], s=8, c=[0, 8000], cmap='viridis', lw=0)
+        self.line = self.ax.scatter([0, 0], [0, 0], s=8, c=[0, 8000], cmap='viridis', lw=0)
         self.ax.set_ylim(0,6000)
         self.ax.set_facecolor("black")
         self.ax.set_xticks([])
         self.ax.set_yticks([])
+
+        self.figure.canvas.draw()
+        self.bg = self.figure.canvas.copy_from_bbox(self.ax.bbox)
         
     def _gen_frame(self):
         scan = []
@@ -59,14 +63,18 @@ class LidarStreamHandler(StreamHandler):
 
         if scan != []:
             offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
-            self.line1.set_offsets(offsets)
+            self.line.set_offsets(offsets)
             dist = np.array([meas[2] for meas in scan])
-            self.line1.set_array(dist)
+            self.line.set_array(dist)
 
+            # captures output of matplotlib graphics
             frame_obj = io.BytesIO()
-        
-            # drawing updated values
-            self.figure.canvas.draw()
+
+            # add generated background (axes and such)
+            self.figure.canvas.restore_region(self.bg)
+
+            # redraw the rest of the scatter plot (new points)
+            self.ax.draw_artist(self.line)
 
             # save figure as a jpeg image
             plt.savefig(frame_obj, format='jpeg')

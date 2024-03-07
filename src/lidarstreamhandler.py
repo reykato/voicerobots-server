@@ -56,7 +56,7 @@ class LidarStreamHandler(StreamHandler):
         self.bg = self.figure.canvas.copy_from_bbox(self.ax.bbox)
         
     def _gen_frame(self):
-        if self.scan != []:
+        if self.scan is not None and len(self.scan) > 0:
             offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in self.scan])
             self.line.set_offsets(offsets)
             dist = np.array([meas[2] for meas in self.scan])

@@ -34,17 +34,17 @@ class LidarStreamHandler(StreamHandler):
                         self.scan = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
                     except:
                         print("Exception in _handle_stream, LiDAR data received is bunk")
-                    self._gen_frame()
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}'")
-            if time_elapsed > .1:
+            if time_elapsed > .25:
                 self.prev_time = time.time()
+                self._gen_frame()
                 
 
     def _setup_mpl(self):
-        self.figure = plt.figure(figsize=(6, 6))
+        self.figure = plt.figure(figsize=(6, 6), dpi=80, facecolor='black', edgecolor='black')
         self.ax = plt.subplot(111, projection='polar')
         self.line = self.ax.scatter([0, 0], [0, 0], s=8, c=[0, 8000], cmap='viridis', lw=0)
         self.ax.set_ylim(0,6000)

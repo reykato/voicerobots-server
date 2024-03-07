@@ -40,10 +40,6 @@
                 </div>
                 <div class="col">
                     <div id="joyDiv" style="width:300px;height:300px;margin:50px;"></div>
-                    <div style="color:white;">
-                      Relative X: <input id="X" type="text" /></br>
-                      Relative Y: <input id="Y" type="text" />
-                    </div>
                 </div>
             </div>
             <div class="row">
@@ -65,18 +61,6 @@
               externalStrokeColor: '#FFFFFF'
             };
             var Joy = new JoyStick('joyDiv', joyParam);
-
-            /*var input_pos_x = document.getElementById("PosX");
-            var input_pos_y = document.getElementById("PosY");
-            var direction = document.getElementById("Direction");*/
-            var X = document.getElementById("X");
-            var Y = document.getElementById("Y");
-
-            /*setInterval(function(){ input_pos_x.value=Joy.GetPosX(); }, 50);
-            setInterval(function(){ input_pos_y.value=Joy.GetPosY(); }, 50);
-            setInterval(function(){ direction.value=Joy.GetDir(); }, 50);*/
-            setInterval(function(){ X.value=Joy.GetX(); }, 50);
-            setInterval(function(){ Y.value=Joy.GetY(); }, 50);
 
             function send_joystick_data() {
                 var entry = {

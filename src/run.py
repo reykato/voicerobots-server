@@ -55,9 +55,9 @@ def gen_audio_to_text():
 def gen_lidar_frame():
     while True:
         frame = lsh.get_frame()
-        if frame is not None:
+        if frame and type(frame) == np.ndarray:
             frame_bytes = frame.tobytes()
-            yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
+            yield (b'--frame\r\n'b'Content-Type: image/png\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
 
 def gen_audio():
     while True:

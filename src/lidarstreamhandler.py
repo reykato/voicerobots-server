@@ -12,7 +12,8 @@ class LidarStreamHandler(StreamHandler):
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
-        self.point_buffer = queue.Queue()
+        # self.point_buffer = queue.Queue()
+        self.scan = []
         self.bg = None
         self.frame_obj = io.BytesIO()
         self.frame = None
@@ -32,18 +33,17 @@ class LidarStreamHandler(StreamHandler):
                     self.point_buffer = queue.Queue()
                 if not received_data is None:
                     try:
-                        decoded_data = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
+                        self.scan = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
                     except:
-                        continue
-                    for point in decoded_data:
-                        self.point_buffer.put(point)
+                        print("Exception in _handle_stream, LiDAR data received is bunk")
+                    self._gen_frame()
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}'")
             if time_elapsed > .1:
                 self.prev_time = time.time()
-                self._gen_frame()
+                
 
     def _setup_mpl(self):
         self.figure = plt.figure(figsize=(6, 6))
@@ -58,14 +58,10 @@ class LidarStreamHandler(StreamHandler):
         self.bg = self.figure.canvas.copy_from_bbox(self.ax.bbox)
         
     def _gen_frame(self):
-        scan = []
-        while not self.point_buffer.empty():
-            scan.append(self.point_buffer.get())
-
-        if scan != []:
-            offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in scan])
+        if self.scan != []:
+            offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in self.scan])
             self.line.set_offsets(offsets)
-            dist = np.array([meas[2] for meas in scan])
+            dist = np.array([meas[2] for meas in self.scan])
             self.line.set_array(dist)
 
             # add generated background (axes and such)

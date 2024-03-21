@@ -96,8 +96,8 @@ def transcription_feed():
     return Response(text, content_type='text/plain')
 
 def main():
-    vsh.start()
     # aus.start()
+    vsh.start()
     lsh.start()
     cs.start()
     # dm.start()
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
+        # aus.stop()
         vsh.stop()
-        cs.stop()
-        aus.stop()
         lsh.stop()
+        cs.stop()
         print("Exiting safely...")

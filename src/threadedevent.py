@@ -42,8 +42,8 @@ class ThreadedEvent():
         if self.loop_thread:
             if self.loop_thread.is_alive():
                 self.stop_event.set()
-                self.loop_thread.join()
                 self._after_stopping()
+                self.loop_thread.join()
                 print("Loop stopped.")
             else:
                 print("Loop is not running.")

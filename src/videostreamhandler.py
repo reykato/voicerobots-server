@@ -38,7 +38,8 @@ class VideoStreamHandler(StreamHandler):
                     self.frame = np.frombuffer(buffer, dtype=np.uint8)
                     # process frame
                     # convert the frame to an image
-                    image = cv2.imdecode(self.frame, cv2.IMREAD_COLOR)
+                    # image = cv2.imdecode(self.frame, cv2.IMREAD_COLOR)
+                    image = self.frame
 
                     # isolate red color
                     lower_red = np.array([0, 0, 100])

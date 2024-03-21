@@ -48,9 +48,13 @@ class VideoStreamHandler(StreamHandler):
                         # Defining the range of red color in HSV space
                         lower_red = np.array([0, 120, 70])
                         upper_red = np.array([10, 255, 255])
+
+                        # Defining the range of green color in HSV space
+                        lower_green = np.array([36, 0, 0])
+                        upper_green = np.array([86, 255, 255])
                     
                         # preparing the mask to overlay 
-                        mask = cv2.inRange(hsv, lower_red, upper_red) 
+                        mask = cv2.inRange(hsv, lower_green, upper_green) 
 
                         # find contours in the mask
                         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

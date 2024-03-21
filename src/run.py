@@ -20,11 +20,10 @@ CS_PORT = 5006
 AUS_PORT = 5007
 LSH_PORT = 5008
 
-control_queue = queue.Queue()
 model = whisper.load_model("tiny.en")
 
 vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
-cs = ControlStream(HOST_IP, CS_PORT, control_queue)
+cs = ControlStream(HOST_IP, CS_PORT)
 aus = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 

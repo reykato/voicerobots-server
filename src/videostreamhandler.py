@@ -42,7 +42,7 @@ class VideoStreamHandler(StreamHandler):
                         # convert the frame to an image
 
                         # isolate red color
-                        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+                        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
       
                         # Threshold of blue in HSV space 
                         lower_blue = np.array([60, 35, 140]) 

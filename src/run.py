@@ -6,7 +6,7 @@ import whisper
 import torch
 from flask_socketio import SocketIO
 from videostreamhandler import VideoStreamHandler
-from controlstreamhandler import ControlStream
+from controlstream import ControlStream
 from audiostreamhandler import AudioStreamHandler
 from lidarstreamhandler import LidarStreamHandler
 
@@ -26,11 +26,6 @@ vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
 csh = ControlStream(HOST_IP, CS_PORT, control_queue)
 aus = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
-
-# declare variables to hold the most recent data from video, control, and lidar streams
-target_center = None
-lidar_scan = None
-control_data = None
 
 def gen_video_frame():
     while True:

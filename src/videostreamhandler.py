@@ -34,8 +34,10 @@ class VideoStreamHandler(ThreadedEvent):
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
-            
-            data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+            try:
+                data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+            except TimeoutError:
+                continue
 
             if len(data) < 100:
                 frame_info = pickle.loads(data)

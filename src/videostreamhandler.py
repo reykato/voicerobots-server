@@ -52,18 +52,20 @@ class VideoStreamHandler(StreamHandler):
 
                     # find contours in the mask
                     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                    cv2.drawContours(image, contours, -1, (0,255,0), 3)
+                    self.frame = image
 
-                    # find the largest contour and its center
-                    max_contour = max(contours, key=cv2.contourArea)
-                    M = cv2.moments(max_contour)
-                    cX = int(M["m10"] / M["m00"])
-                    cY = int(M["m01"] / M["m00"])
+                    # # find the largest contour and its center
+                    # max_contour = max(contours, key=cv2.contourArea)
+                    # M = cv2.moments(max_contour)
+                    # cX = int(M["m10"] / M["m00"])
+                    # cY = int(M["m01"] / M["m00"])
 
-                    # store the center point
-                    self.center = (cX, cY)
+                    # # store the center point
+                    # self.center = (cX, cY)
                     
-                    # draw a white dot at the coordinates of the center_of_red
-                    cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
+                    # # draw a white dot at the coordinates of the center_of_red
+                    # cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
 
     def _after_stopping(self):
         self.socket.close()

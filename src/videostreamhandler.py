@@ -42,14 +42,14 @@ class VideoStreamHandler(StreamHandler):
                         # convert the frame to an image
 
                         # isolate red color
-                        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-
-                        #lower threshold for red
-                        lower_red = np.array([0, 100, 75])
-                        #upper threshold for red
-                        upper_red = np.array([5, 76, 100])
-
-                        mask = cv2.inRange(hsv, lower_red, upper_red)
+                        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+      
+                        # Threshold of blue in HSV space 
+                        lower_blue = np.array([60, 35, 140]) 
+                        upper_blue = np.array([180, 255, 255]) 
+                    
+                        # preparing the mask to overlay 
+                        mask = cv2.inRange(hsv, lower_blue, upper_blue) 
 
                         # find contours in the mask
                         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -58,8 +58,8 @@ class VideoStreamHandler(StreamHandler):
                         if contours is None or len(contours) == 0:
                             print("No contours found")
                         
-                        # self.frame = image
-                        self.frame = mask
+                        result = cv2.bitwise_and(image, image, mask = mask)
+                        self.frame = result
                         self.frame_is_new = True
 
                         # # find the largest contour and its center

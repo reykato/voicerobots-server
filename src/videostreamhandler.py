@@ -56,24 +56,24 @@ class VideoStreamHandler(StreamHandler):
                         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                         cv2.drawContours(image, contours, -1, (0,255,0), 3)
 
-                        if contours is None or len(contours) == 0:
-                            print("No contours found")
+                        # find the largest contour and its center
+                        if contours:
+                            max_contour = max(contours, key=cv2.contourArea)
+                            M = cv2.moments(max_contour)
+                            cX = int(M["m10"] / M["m00"])
+                            cY = int(M["m01"] / M["m00"])
+
+                            # store the center point
+                            self.center = (cX, cY)
+                            
+                            # draw a white dot at the coordinates of the center_of_red
+                            cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
                         
                         _, processed_buffer = cv2.imencode('.jpg', image)
                         self.frame = np.frombuffer(processed_buffer, np.uint8)
                         self.frame_is_new = True
 
-                        # # find the largest contour and its center
-                        # max_contour = max(contours, key=cv2.contourArea)
-                        # M = cv2.moments(max_contour)
-                        # cX = int(M["m10"] / M["m00"])
-                        # cY = int(M["m01"] / M["m00"])
-
-                        # # store the center point
-                        # self.center = (cX, cY)
                         
-                        # # draw a white dot at the coordinates of the center_of_red
-                        # cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
 
     def _after_stopping(self):
         self.socket.close()

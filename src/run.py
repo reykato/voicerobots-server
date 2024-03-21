@@ -97,17 +97,16 @@ def transcription_feed():
 
 def main():
     vsh.start()
-    cs.start()
     # aus.start()
     lsh.start()
+    cs.start()
+    # dm.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
-    
-
 
 if __name__ == "__main__":
     try:
         main()
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, SystemExit):
         vsh.stop()
         cs.stop()
         aus.stop()

@@ -41,30 +41,26 @@ class VideoStreamHandler(StreamHandler):
                     image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
                     if image is not None:
-                        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-                        # process frame
-                        # convert the frame to an image
-
                         # isolate red color
-                        # hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
+                        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
       
-                        # # Threshold of blue in HSV space 
-                        # lower_blue = np.array([60, 35, 140]) 
-                        # upper_blue = np.array([180, 255, 255]) 
+                        # Threshold of blue in HSV space 
+                        # Defining the range of red color in HSV space
+                        lower_red = np.array([0, 120, 70])
+                        upper_red = np.array([10, 255, 255])
                     
-                        # # preparing the mask to overlay 
-                        # mask = cv2.inRange(hsv, lower_blue, upper_blue) 
+                        # preparing the mask to overlay 
+                        mask = cv2.inRange(hsv, lower_red, upper_red) 
 
-                        # # find contours in the mask
-                        # contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                        # cv2.drawContours(image, contours, -1, (0,255,0), 3)
+                        # find contours in the mask
+                        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                        cv2.drawContours(image, contours, -1, (0,255,0), 3)
 
-                        # if contours is None or len(contours) == 0:
-                        #     print("No contours found")
+                        if contours is None or len(contours) == 0:
+                            print("No contours found")
                         
-                        _, buf = cv2.imencode('.jpg', gray_img)
-                        self.frame = np.frombuffer(buf, np.uint8)
+                        _, processed_buffer = cv2.imencode('.jpg', image)
+                        self.frame = np.frombuffer(processed_buffer, np.uint8)
                         self.frame_is_new = True
 
                         # # find the largest contour and its center

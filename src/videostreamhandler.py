@@ -58,7 +58,7 @@ class VideoStreamHandler(StreamHandler):
 
                         # find contours in the mask
                         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                        # cv2.drawContours(image, contours, -1, (0,255,0), 3)
+                        cv2.drawContours(image, contours, -1, (0,255,0), 3)
 
                         # find the largest contour and its center
                         if len(contours) > 0:

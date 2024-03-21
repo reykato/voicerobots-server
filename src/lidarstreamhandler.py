@@ -19,7 +19,7 @@ class LidarStreamHandler(ThreadedEvent):
         - port (int): Port which the receiving machine is listening to.
         (e.g. 5100)
         """
-
+        super().__init__()
         self.host = host
         self.port = port
 

@@ -14,6 +14,7 @@ class DecisionMaker(ThreadedEvent):
         - cs (ControlStream): ControlStream object (for output).
         """
 
+        super().__init__()
         self.vsh = vsh
         self.lsh = lsh
         self.cs = cs

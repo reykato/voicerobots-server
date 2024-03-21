@@ -39,9 +39,6 @@ class VideoStreamHandler(StreamHandler):
                     
                     # Decode the JPEG buffer into an OpenCV image
                     image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
-                    
-                    # Perform your computer vision tasks
-                    # For example, let's convert the image to grayscale
 
                     if image is not None:
                         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -66,8 +63,8 @@ class VideoStreamHandler(StreamHandler):
                         # if contours is None or len(contours) == 0:
                         #     print("No contours found")
                         
-                        
-                        self.frame = gray_img
+                        _, buf = cv2.imencode('.jpg', gray_img)
+                        self.frame = np.frombuffer(buf, np.uint8)
                         self.frame_is_new = True
 
                         # # find the largest contour and its center

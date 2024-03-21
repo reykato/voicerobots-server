@@ -92,6 +92,9 @@ class LidarStreamHandler(ThreadedEvent):
             self.frame_is_new = True
             print("lidar frame generated!!")
 
+    def get_scan(self):
+        return self.scan
+
     def get_frame(self):
         return_value = np.asarray(self.frame) if self.frame_is_new else None
         self.frame_is_new = False

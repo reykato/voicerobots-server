@@ -1,35 +1,26 @@
-class DecisionMaker:
-    def __init__(self, buffer):
-        self.buffer = buffer
+from threadedevent import ThreadedEvent
 
-    def process_data(self):
-        raise NotImplementedError("Subclasses must implement this method")
+class DecisionMaker(ThreadedEvent):
+    class DecisionMaker:
+        def __init__(self, vsh, lsh, csh):
+            """
+            Class for making decisions based on the input streams.
 
-    def get_movement(self):
-        raise NotImplementedError("Subclasses must implement this method")
+            Parameters:
+            - vsh (VideoStreamHandler): VideoStreamHandler object.
+            - lsh (LidarStreamHandler): LidarStreamHandler object.
+            - csh (ControlStream): ControlStream object.
+            """
 
+            self.vsh = vsh
+            self.lsh = lsh
+            self.csh = csh
 
-class VideoDecisionMaker(DecisionMaker):
-    def __init__(self, video_buffer):
-        super().__init__(video_buffer)
-
-    def process_data(self):
-        # Process video data from the buffer
+    def _before_starting(self):
         pass
 
-    def get_movement(self):
-        # Return a tuple for movement based on the video data
-        return (0, 0)
-
-
-class LidarDecisionMaker(DecisionMaker):
-    def __init__(self, lidar_buffer):
-        super().__init__(lidar_buffer)
-
-    def process_data(self):
-        # Process lidar data from the buffer
+    def _after_stopping(self):
         pass
 
-    def get_movement(self):
-        # Return a tuple for movement based on the lidar data
-        return (0, 0)
+    def _handle_stream(self):
+        pass

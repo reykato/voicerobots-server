@@ -34,6 +34,7 @@ class LidarStreamHandler(ThreadedEvent):
         self.frame_is_new = False
         self.prev_time = time.time()
         self._setup_mpl()
+        self.socket.settimeout(0.2)
 
     def _after_stopping(self):
         self.socket.close()
@@ -48,6 +49,8 @@ class LidarStreamHandler(ThreadedEvent):
                         self.scan = np.frombuffer(received_data, dtype=np.float32).reshape((-1, 3))
                     except:
                         print("Exception in _handle_stream, LiDAR data received is bunk")
+            except TimeoutError:
+                continue
             except socket.error as e:
                 received_data = None
                 if not e.args[0] == 'timed out':

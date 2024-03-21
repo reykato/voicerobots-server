@@ -1,7 +1,9 @@
-from streamhandler import StreamHandler
 import pickle
-import numpy as np
 import socket
+import numpy as np
+import cv2
+from streamhandler import StreamHandler
+
 
 class VideoStreamHandler(StreamHandler):
     MAX_PACKET_SIZE = 65540
@@ -34,6 +36,29 @@ class VideoStreamHandler(StreamHandler):
 
                     self.frame_is_new = True
                     self.frame = np.frombuffer(buffer, dtype=np.uint8)
+                    # process frame
+                    # convert the frame to an image
+                    image = cv2.imdecode(self.frame, cv2.IMREAD_COLOR)
+
+                    # isolate red color
+                    lower_red = np.array([0, 0, 100])
+                    upper_red = np.array([50, 50, 255])
+                    mask = cv2.inRange(image, lower_red, upper_red)
+
+                    # find contours in the mask
+                    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+                    # find the largest contour and its center
+                    max_contour = max(contours, key=cv2.contourArea)
+                    M = cv2.moments(max_contour)
+                    cX = int(M["m10"] / M["m00"])
+                    cY = int(M["m01"] / M["m00"])
+
+                    # store the center point
+                    self.center = (cX, cY)
+                    
+                    # draw a white dot at the coordinates of the center_of_red
+                    cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
 
     def _after_stopping(self):
         self.socket.close()

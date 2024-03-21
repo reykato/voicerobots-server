@@ -60,8 +60,12 @@ class VideoStreamHandler(StreamHandler):
                         if len(contours) > 0:
                             max_contour = max(contours, key=cv2.contourArea)
                             M = cv2.moments(max_contour)
-                            cX = int(M["m10"] / M["m00"])
-                            cY = int(M["m01"] / M["m00"])
+                            if M["m00"] != 0:
+                                cX = int(M["m10"] / M["m00"])
+                                cY = int(M["m01"] / M["m00"])
+                            else:
+                                cX = 0
+                                cY = 0                            
 
                             # store the center point
                             self.center = (cX, cY)

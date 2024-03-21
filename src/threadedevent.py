@@ -1,20 +1,7 @@
 import threading
 
-class StreamHandler():
-    def __init__(self, host: str, port: int):
-        """
-        Class for handling IP streams.
-
-        Parameters:
-        - host (str): Address of the receiving machine.
-        (e.g. "70.224.3.88")
-        - port (int): Port which the receiving machine is listening to.
-        (e.g. 5100)
-        """
-
-        self.host = host
-        self.port = port
-
+class ThreadedEvent():
+    def __init__(self):
         self.stop_event = threading.Event()
         self.loop_thread = threading.Thread(target=self._handle_stream)
     

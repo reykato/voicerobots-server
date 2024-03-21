@@ -2,13 +2,27 @@ import socket
 import io
 import queue
 import time
-from streamhandler import StreamHandler
+from threadedevent import ThreadedEvent
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-class LidarStreamHandler(StreamHandler):
+class LidarStreamHandler(ThreadedEvent):
+    def __init__(self, host, port):
+        """
+        Class for handling lidar IP streams.
+
+        Parameters:
+        - host (str): Address of the receiving machine.
+        (e.g. "70.224.3.88")
+        - port (int): Port which the receiving machine is listening to.
+        (e.g. 5100)
+        """
+
+        self.host = host
+        self.port = port
+
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
@@ -38,9 +52,9 @@ class LidarStreamHandler(StreamHandler):
                 received_data = None
                 if not e.args[0] == 'timed out':
                     print(f"Error: '{e.args[0]}'")
-            if time_elapsed > .25:
+            if time_elapsed > .5:
                 self.prev_time = time.time()
-                # self._gen_frame()
+                self._gen_frame()
                 
 
     def _setup_mpl(self):

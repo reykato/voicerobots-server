@@ -1,5 +1,5 @@
 import queue
-from flask import Flask, render_template, Response, render_template_string
+from flask import Flask, render_template, Response
 import numpy as np
 import cv2
 import whisper
@@ -9,7 +9,6 @@ from videostreamhandler import VideoStreamHandler
 from controlstreamhandler import ControlStream
 from audiostreamhandler import AudioStreamHandler
 from lidarstreamhandler import LidarStreamHandler
-
 
 flask_instance = Flask(__name__)
 socketio = SocketIO(flask_instance) # websocket
@@ -27,6 +26,11 @@ vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
 csh = ControlStream(HOST_IP, CS_PORT, control_queue)
 aus = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
+
+# declare variables to hold the most recent data from video, control, and lidar streams
+target_center = None
+lidar_scan = None
+control_data = None
 
 def gen_video_frame():
     while True:

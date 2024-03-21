@@ -1,10 +1,24 @@
-from streamhandler import StreamHandler
+from threadedevent import ThreadedEvent
 import numpy as np
 import socket
 import pyaudio
 
-class AudioStreamHandler(StreamHandler):
+class AudioStreamHandler(ThreadedEvent):
     MAX_PACKET_SIZE = 65540
+
+    def __init__(self, host, port):
+        """
+        Class for handling audio IP streams.
+
+        Parameters:
+        - host (str): Address of the receiving machine.
+        (e.g. "70.224.3.88")
+        - port (int): Port which the receiving machine is listening to.
+        (e.g. 5100)
+        """
+
+        self.host = host
+        self.port = port
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -38,13 +38,17 @@ class VideoStreamHandler(StreamHandler):
                     self.frame = np.frombuffer(buffer, dtype=np.uint8)
                     # process frame
                     # convert the frame to an image
-                    # image = cv2.imdecode(self.frame, cv2.IMREAD_COLOR)
-                    image = self.frame
+                    image = cv2.imdecode(self.frame, cv2.IMREAD_COLOR)
 
                     # isolate red color
-                    lower_red = np.array([0, 0, 100])
-                    upper_red = np.array([50, 50, 255])
-                    mask = cv2.inRange(image, lower_red, upper_red)
+                    mask = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+                    #lower threshold for red
+                    lower_red=np.array([0, 100, 75])
+                    #upper threshold for red
+                    upper_red=np.array([5, 76, 100])
+
+                    mask=cv2.inRange(mask, lower_red, upper_red)
 
                     # find contours in the mask
                     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

@@ -35,7 +35,7 @@ class VideoStreamHandler(StreamHandler):
                             buffer += data
 
                     frame = np.frombuffer(buffer, dtype=np.uint8)
-                    if frame:
+                    if len(frame) > 0:
                         # process frame
                         # convert the frame to an image
                         # image = cv2.imdecode(frame, cv2.IMREAD_COLOR)

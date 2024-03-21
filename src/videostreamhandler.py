@@ -42,7 +42,8 @@ class VideoStreamHandler(StreamHandler):
 
                     if image is not None:
                         # isolate red color
-                        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
+                        image_blurred = cv2.GaussianBlur(image, (5, 5), 0)
+                        hsv = cv2.cvtColor(image_blurred, cv2.COLOR_BGR2HSV) 
       
                         # Threshold of blue in HSV space 
                         # Defining the range of red color in HSV space

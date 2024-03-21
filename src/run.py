@@ -9,6 +9,7 @@ from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from audiostreamhandler import AudioStreamHandler
 from lidarstreamhandler import LidarStreamHandler
+from decisionmaker import DecisionMaker
 
 flask_instance = Flask(__name__)
 socketio = SocketIO(flask_instance) # websocket
@@ -23,9 +24,11 @@ control_queue = queue.Queue()
 model = whisper.load_model("tiny.en")
 
 vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
-csh = ControlStream(HOST_IP, CS_PORT, control_queue)
+cs = ControlStream(HOST_IP, CS_PORT, control_queue)
 aus = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
+
+dm = DecisionMaker(vsh, lsh, cs)
 
 def gen_video_frame():
     while True:
@@ -65,11 +68,12 @@ def gen_audio():
             yield audio.tobytes()
 
 @socketio.on('json')
-def handle_message(json):
+def handle_control(json):
     # separate x and y from the json into two variables for easier use
     data = [float(json['x']) / 100.0, float(json['y']) / 100.0]
     np_data = np.array(data, dtype=np.float32)
-    control_queue.put(np_data)
+    # control_queue.put(np_data)
+    dm.set_control_data(np_data)
 
 @flask_instance.route('/')
 def index():
@@ -94,7 +98,7 @@ def transcription_feed():
 
 def main():
     vsh.start()
-    csh.start()
+    cs.start()
     # aus.start()
     lsh.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
@@ -106,6 +110,6 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         vsh.stop()
-        csh.stop()
+        cs.stop()
         aus.stop()
         lsh.stop()

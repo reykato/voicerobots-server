@@ -21,7 +21,7 @@ class DecisionMaker(ThreadedEvent):
         # hold the most recent frame from video, control tuple from joystick, and lidar scan
         self.target_center = None
         self.lidar_scan = None
-        self.control_data = None
+        self.control_data = (0, 0)
 
     def _before_starting(self):
         pass
@@ -36,4 +36,19 @@ class DecisionMaker(ThreadedEvent):
         while not self.stop_event.is_set():
             self.target_center = self.vsh.get_center()
             self.lidar_scan = self.lsh.get_scan()
-            # need to add a method to get the control data from the flask instance
+
+    def _send_control(self):
+        """
+        Sends the control data to the ControlStream object.
+        """
+        self.cs.send_control(self.control_data)
+
+    def set_control_data(self, control_data:tuple):
+        """
+        Sets the control data attribute.
+
+        Parameters:
+        - control_data (tuple): Tuple (x, y) containing the x and y joystick values.
+        """
+
+        self.control_data = control_data

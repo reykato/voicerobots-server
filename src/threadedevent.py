@@ -39,13 +39,16 @@ class ThreadedEvent():
         """
         Stops the loop started using `start()` and runs code at `_after_stopping`.
         """
-   
-        if self.loop_thread.is_alive():
-            self.stop_event.set()
-            self.loop_thread.join()
-            self._after_stopping()
-            print("Loop stopped.")
+        if self.loop_thread:
+            if self.loop_thread.is_alive():
+                self.stop_event.set()
+                self.loop_thread.join()
+                self._after_stopping()
+                print("Loop stopped.")
+            else:
+                print("Loop is not running.")
         else:
-            print("Loop is not running.")
+            print("Loop has not been started.")
+
     
 

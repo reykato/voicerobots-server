@@ -24,7 +24,7 @@ model = whisper.load_model("tiny.en")
 
 vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
 cs = ControlStream(HOST_IP, CS_PORT)
-aus = AudioStreamHandler(HOST_IP, AUS_PORT)
+ash = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 
 dm = DecisionMaker(vsh, lsh, cs)
@@ -43,7 +43,7 @@ def gen_audio_to_text():
     buffer = np.ndarray(shape=(0,))
 
     while True:
-        audio = aus.get_audio()
+        audio = ash.get_audio()
         if audio is not None and type(audio) == np.ndarray:
             buffer = np.concatenate((buffer, audio), axis=0)
             if buffer.size > 1000000:
@@ -62,7 +62,7 @@ def gen_lidar_frame():
 
 def gen_audio():
     while True:
-        audio = aus.get_audio()
+        audio = ash.get_audio()
         if audio is not None and type(audio) == np.ndarray:
             yield audio.tobytes()
 
@@ -96,7 +96,7 @@ def transcription_feed():
     return Response(text, content_type='text/plain')
 
 def main():
-    # aus.start()
+    # ash.start()
     vsh.start()
     lsh.start()
     cs.start()
@@ -107,8 +107,9 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
-        # aus.stop()
+        # ash.stop()
         vsh.stop()
         lsh.stop()
         cs.stop()
+        # dm.stop()
         print("Exiting safely...")

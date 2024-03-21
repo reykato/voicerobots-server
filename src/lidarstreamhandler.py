@@ -40,7 +40,7 @@ class LidarStreamHandler(StreamHandler):
                     print(f"Error: '{e.args[0]}'")
             if time_elapsed > .25:
                 self.prev_time = time.time()
-                self._gen_frame()
+                # self._gen_frame()
                 
 
     def _setup_mpl(self):

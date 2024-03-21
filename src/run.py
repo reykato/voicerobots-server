@@ -112,3 +112,4 @@ if __name__ == "__main__":
         cs.stop()
         aus.stop()
         lsh.stop()
+        print("Exiting safely...")

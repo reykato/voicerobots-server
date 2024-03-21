@@ -34,32 +34,40 @@ class VideoStreamHandler(StreamHandler):
                         else:
                             buffer += data
 
-                    frame = np.frombuffer(buffer, dtype=np.uint8)
+                    # Convert the JPEG buffer to a numpy array
+                    frame = np.frombuffer(buffer, np.uint8)
+                    
+                    # Decode the JPEG buffer into an OpenCV image
                     image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                    
+                    # Perform your computer vision tasks
+                    # For example, let's convert the image to grayscale
 
                     if image is not None:
+                        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
                         # process frame
                         # convert the frame to an image
 
                         # isolate red color
-                        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
+                        # hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
       
-                        # Threshold of blue in HSV space 
-                        lower_blue = np.array([60, 35, 140]) 
-                        upper_blue = np.array([180, 255, 255]) 
+                        # # Threshold of blue in HSV space 
+                        # lower_blue = np.array([60, 35, 140]) 
+                        # upper_blue = np.array([180, 255, 255]) 
                     
-                        # preparing the mask to overlay 
-                        mask = cv2.inRange(hsv, lower_blue, upper_blue) 
+                        # # preparing the mask to overlay 
+                        # mask = cv2.inRange(hsv, lower_blue, upper_blue) 
 
-                        # find contours in the mask
-                        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                        cv2.drawContours(image, contours, -1, (0,255,0), 3)
+                        # # find contours in the mask
+                        # contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                        # cv2.drawContours(image, contours, -1, (0,255,0), 3)
 
-                        if contours is None or len(contours) == 0:
-                            print("No contours found")
+                        # if contours is None or len(contours) == 0:
+                        #     print("No contours found")
                         
-                        result = cv2.bitwise_and(image, image, mask = mask)
-                        self.frame = result
+                        
+                        self.frame = gray_img
                         self.frame_is_new = True
 
                         # # find the largest contour and its center

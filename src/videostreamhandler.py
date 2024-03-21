@@ -30,9 +30,11 @@ class VideoStreamHandler(ThreadedEvent):
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
+        self.socket.settimeout(0.2)
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
+            
             data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
 
             if len(data) < 100:

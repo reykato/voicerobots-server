@@ -35,10 +35,11 @@ class VideoStreamHandler(StreamHandler):
                             buffer += data
 
                     frame = np.frombuffer(buffer, dtype=np.uint8)
-                    if len(frame) > 0:
+                    image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+
+                    if image is not None:
                         # process frame
                         # convert the frame to an image
-                        image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
                         # isolate red color
                         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

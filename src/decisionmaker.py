@@ -2,6 +2,7 @@ from threadedevent import ThreadedEvent
 from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from lidarstreamhandler import LidarStreamHandler
+from time import sleep
 
 class DecisionMaker(ThreadedEvent):
     # angle range for the lidar scan to consider as the front of the robot (in degrees)
@@ -64,6 +65,8 @@ class DecisionMaker(ThreadedEvent):
 
             # send the control data to the ControlStream object
             self._send_control()
+            sleep(0.1)
+
 
     def _make_video_decision(self, target_center:tuple) -> tuple:
         """

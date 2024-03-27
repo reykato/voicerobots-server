@@ -100,7 +100,7 @@ def main():
     vsh.start()
     lsh.start()
     cs.start()
-    # dm.start()
+    dm.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
 
 if __name__ == "__main__":
@@ -111,5 +111,5 @@ if __name__ == "__main__":
         vsh.stop()
         lsh.stop()
         cs.stop()
-        # dm.stop()
+        dm.stop()
         print("Exiting safely...")

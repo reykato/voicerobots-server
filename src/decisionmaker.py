@@ -112,7 +112,9 @@ class DecisionMaker(ThreadedEvent):
         """
         Sends the control data to the ControlStream object.
         """
+        print(f"Sending control data: {self.control_data}")
         self.cs.send_control(self.control_data)
+
 
     def set_control_data(self, control_data:tuple):
         """

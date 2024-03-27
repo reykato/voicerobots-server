@@ -24,7 +24,6 @@ class ControlStream():
         self._wait_for_connection()
 
     def _after_stopping(self):
-        self.server_socket.close()
         if self.client_socket:
             self.client_socket.close()
 

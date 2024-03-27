@@ -32,6 +32,9 @@ class DecisionMaker(ThreadedEvent):
 
         # hold the control data to be sent to the robot
         self.control_data = (0, 0)
+        
+        # flag to indicate if the control data has been manually set using the joystick interface
+        self.control_data_override = False
 
     def _before_starting(self):
         pass
@@ -75,7 +78,7 @@ class DecisionMaker(ThreadedEvent):
         - tuple: Tuple (x, y) containing the x and y joystick values.
         """
         print(f"Target Center: {target_center}, making video decision...")
-        return (0.5, 0.5)
+        return (0, 0)
     
     def _make_lidar_decision(self, lidar_scan:list) -> bool:
         """

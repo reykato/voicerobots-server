@@ -84,10 +84,10 @@ class DecisionMaker(ThreadedEvent):
         if target_center != (0, 0):
             # if the target is to the right of the center, move right
             if target_center[0] > 560:
-                return tuple(float((480-target_center[0])/-480), float(0))
+                return (float((480-target_center[0])/-480), float(0))
             # if the target is to the left of the center, move left
             elif target_center[0] <= 400:
-                return tuple(float(((480-target_center[0])/480)), float(0))
+                return (float(((480-target_center[0])/480)), float(0))
             # if the target is at the center, move forward
             else:
                 return (float(0), float(0.4))

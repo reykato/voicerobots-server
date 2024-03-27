@@ -78,7 +78,17 @@ class DecisionMaker(ThreadedEvent):
         - tuple: Tuple (x, y) containing the x and y joystick values.
         """
         print(f"Target Center: {target_center}, making video decision...")
-        return (0, 0)
+
+        if target_center != (0, 0):
+            # if the target is to the right of the center, move right
+            if target_center[0] > 580:
+                return (0.5, 0)
+            # if the target is to the left of the center, move left
+            elif target_center[0] <= 380:
+                return (-0.5, 0)
+            # if the target is at the center, move forward
+            else:
+                return (0, 0.5)
     
     def _make_lidar_decision(self, lidar_scan:list) -> bool:
         """

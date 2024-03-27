@@ -110,8 +110,7 @@ class VideoStreamHandler(ThreadedEvent):
         self.frame_is_new = True
 
     def get_center(self):
-        print(f"Getting Center: {self.center}")
-        return tuple(self.center)
+        return self.center
 
     def _after_stopping(self):
         self.socket.close()

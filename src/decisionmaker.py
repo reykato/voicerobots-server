@@ -44,18 +44,18 @@ class DecisionMaker(ThreadedEvent):
         Updates the target_center, lidar_scan, and control_data attributes with the most recent data.
         """
         while not self.stop_event.is_set():
-            self.target_center = self.vsh.get_center()
-            self.lidar_scan = self.lsh.get_scan()
-
-            # make decisions based on the target_center from the webcam stream
-            video_control_decision = self._make_video_decision(self.target_center)
-
-            # decide whether the robot is too close to an object based on the lidar scan
-            stop_robot = self._make_lidar_decision(self.lidar_scan)
-
             if self.control_data_override:  # if the control data has been manually set using the joystick interface
                 self.control_data_override = False
             else:
+                self.target_center = self.vsh.get_center()
+                self.lidar_scan = self.lsh.get_scan()
+
+                # make decisions based on the target_center from the webcam stream
+                video_control_decision = self._make_video_decision(self.target_center)
+
+                # decide whether the robot is too close to an object based on the lidar scan
+                stop_robot = self._make_lidar_decision(self.lidar_scan)
+
                 if stop_robot:                  # if the robot is too close to an object, stop the robot
                     self.control_data = (0, 0)
                 else:                           # if the robot is not too close to an object
@@ -123,6 +123,6 @@ class DecisionMaker(ThreadedEvent):
         Parameters:
         - control_data (tuple): Tuple (x, y) containing the x and y joystick values.
         """
-
-        self.control_data = control_data
-        self.control_data_override = True
+        if control_data[0] != 0 and control_data[1] != 0:
+            self.control_data = control_data
+            self.control_data_override = True

@@ -29,7 +29,7 @@ class VideoStreamHandler(ThreadedEvent):
         self.socket.settimeout(0.2)
         self.frame = None
         self.frame_is_new = False
-        self.center = None
+        self.center = (0, 0)
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
@@ -110,8 +110,9 @@ class VideoStreamHandler(ThreadedEvent):
         self.frame_is_new = True
 
     def get_center(self):
-        print(f"Center: {self.center}")
-        return self.center
+        if self.center != (0, 0):
+            print(f"Getting Center: {self.center}")
+            return self.center
 
     def _after_stopping(self):
         self.socket.close()

@@ -30,6 +30,9 @@ class DecisionMaker(ThreadedEvent):
         self.target_center = None
         self.lidar_scan = None
 
+        # hold the control data to be sent to the robot
+        self.control_data = (0, 0)
+
     def _before_starting(self):
         pass
 
@@ -41,8 +44,6 @@ class DecisionMaker(ThreadedEvent):
         Updates the target_center, lidar_scan, and control_data attributes with the most recent data.
         """
         while not self.stop_event.is_set():
-            control_data = (0, 0)
-
             self.target_center = self.vsh.get_center()
             self.lidar_scan = self.lsh.get_scan()
 
@@ -52,13 +53,16 @@ class DecisionMaker(ThreadedEvent):
             # decide whether the robot is too close to an object based on the lidar scan
             stop_robot = self._make_lidar_decision(self.lidar_scan)
 
-            if stop_robot:                  # if too close to an object, stop the robot
-                control_data = (0, 0)
-            else:                           # if not too close to an object, use the video control decision
-                control_data = video_control_decision
+            if self.control_data_override:  # if the control data has been manually set using the joystick interface
+                self.control_data_override = False
+            else:
+                if stop_robot:                  # if the robot is too close to an object, stop the robot
+                    self.control_data = (0, 0)
+                else:                           # if the robot is not too close to an object
+                    self.control_data = video_control_decision
 
             # send the control data to the ControlStream object
-            self._send_control(control_data)
+            self._send_control()
 
     def _make_video_decision(target_center:tuple) -> tuple:
         """
@@ -104,18 +108,19 @@ class DecisionMaker(ThreadedEvent):
             return False
 
 
-    def _send_control(self, control_data:tuple):
+    def _send_control(self):
         """
         Sends the control data to the ControlStream object.
         """
-        self.cs.send_control(control_data)
+        self.cs.send_control(self.control_data)
 
-    # def set_control_data(self, control_data:tuple):
-    #     """
-    #     Sets the control data attribute.
+    def set_control_data(self, control_data:tuple):
+        """
+        Sets the control data attribute.
 
-    #     Parameters:
-    #     - control_data (tuple): Tuple (x, y) containing the x and y joystick values.
-    #     """
+        Parameters:
+        - control_data (tuple): Tuple (x, y) containing the x and y joystick values.
+        """
 
-    #     self.control_data = control_data
+        self.control_data = control_data
+        self.control_data_override = True

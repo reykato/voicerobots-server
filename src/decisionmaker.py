@@ -67,7 +67,7 @@ class DecisionMaker(ThreadedEvent):
             # send the control data to the ControlStream object
             self._send_control()
 
-    def _make_video_decision(target_center:tuple) -> tuple:
+    def _make_video_decision(self, target_center:tuple) -> tuple:
         """
         Makes a decision based on the target_center attribute.
 

@@ -82,13 +82,13 @@ class DecisionMaker(ThreadedEvent):
         if target_center != (0, 0):
             # if the target is to the right of the center, move right
             if target_center[0] > 560:
-                return (480-target_center[0]/480, 0)
+                return ((480-target_center[0])/480, 0)
             # if the target is to the left of the center, move left
             elif target_center[0] <= 400:
-                return (-(480-target_center[0]/480), 0)
+                return (-((480-target_center[0])/480), 0)
             # if the target is at the center, move forward
             else:
-                return (0, 0.3)
+                return (0, 0.4)
     
     def _make_lidar_decision(self, lidar_scan:list) -> bool:
         """

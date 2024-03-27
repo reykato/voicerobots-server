@@ -49,21 +49,22 @@ class DecisionMaker(ThreadedEvent):
         """
         while not self.stop_event.is_set():
 
-            self.target_center = self.vsh.get_center()
-            self.lidar_scan = self.lsh.get_scan()
+            if not self.control_data_override:
+                self.target_center = self.vsh.get_center()
+                self.lidar_scan = self.lsh.get_scan()
 
-            # make decisions based on the target_center from the webcam stream
-            video_control_decision = self._make_video_decision(self.target_center)
+                # make decisions based on the target_center from the webcam stream
+                video_control_decision = self._make_video_decision(self.target_center)
 
-            # decide whether the robot is too close to an object based on the lidar scan
-            stop_robot = self._make_lidar_decision(self.lidar_scan)
+                # decide whether the robot is too close to an object based on the lidar scan
+                stop_robot = self._make_lidar_decision(self.lidar_scan)
 
-            if stop_robot:                  # if the robot is too close to an object, stop the robot
-                self.control_data = (0, 0)
-            else:                           # if the robot is not too close to an object
-                self.control_data = video_control_decision
+                if stop_robot:                  # if the robot is too close to an object, stop the robot
+                    self.control_data = (0, 0)
+                else:                           # if the robot is not too close to an object
+                    self.control_data = video_control_decision
 
-            # send the control data to the ControlStream object
+                # send the control data to the ControlStream object
             self._send_control()
             sleep(0.1)
 

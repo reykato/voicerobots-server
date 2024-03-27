@@ -72,6 +72,7 @@ def handle_control(json):
     data = [float(json['x']) / 100.0, float(json['y']) / 100.0]
     np_data = np.array(data, dtype=np.float32)
     # control_queue.put(np_data)
+    print(f"Control Data from joystick: {np_data}")
     dm.set_control_data(np_data)
 
 @flask_instance.route('/')

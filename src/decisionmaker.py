@@ -39,12 +39,6 @@ class DecisionMaker(ThreadedEvent):
         # flag to indicate if the control data has been manually set using the joystick interface
         self.control_data_override = False
 
-    def _before_starting(self):
-        pass
-
-    def _after_stopping(self):
-        pass
-
     def _handle_stream(self):
         """
         Updates the target_center, lidar_scan, and control_data attributes with the most recent data.

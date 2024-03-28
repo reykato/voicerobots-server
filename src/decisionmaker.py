@@ -131,7 +131,8 @@ class DecisionMaker(ThreadedEvent):
         """
         print(f"Sending control data: {self.control_data}")
         nparr = np.array(self.control_data, dtype=np.float32)
-        self.cs.send_control(nparr)
+        if nparr:
+            self.cs.send_control(nparr)
 
 
     def set_control_data(self, control_data):

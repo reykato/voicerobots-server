@@ -131,7 +131,7 @@ class DecisionMaker(ThreadedEvent):
         """
         print(f"Sending control data: {self.control_data}")
         nparr = np.array(self.control_data, dtype=np.float32)
-        if nparr:
+        if nparr is not None:
             self.cs.send_control(nparr)
 
 

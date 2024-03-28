@@ -130,7 +130,7 @@ class DecisionMaker(ThreadedEvent):
         Sends the control data to the ControlStream object.
         """
         print(f"Sending control data: {self.control_data}")
-        nparr = np_data = np.array(self.control_data, dtype=np.float32)
+        nparr = np.array(self.control_data, dtype=np.float32)
         self.cs.send_control(nparr)
 
 

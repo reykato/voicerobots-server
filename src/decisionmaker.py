@@ -81,7 +81,7 @@ class DecisionMaker(ThreadedEvent):
         """
         print(f"Target Center: {target_center}, making video decision...")
 
-        if target_center != [0.0, 0.0]:
+        if target_center[0] != 0 and target_center[1] != 0:
             # if the target is to the right of the center, move right
             if target_center[0] > 560:
                 return [(480-target_center[0])/-480, 0]

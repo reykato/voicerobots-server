@@ -1,8 +1,10 @@
+from time import sleep
+import numpy as np
 from threadedevent import ThreadedEvent
 from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from lidarstreamhandler import LidarStreamHandler
-from time import sleep
+
 
 class DecisionMaker(ThreadedEvent):
     # angle range for the lidar scan to consider as the front of the robot (in degrees)
@@ -128,7 +130,8 @@ class DecisionMaker(ThreadedEvent):
         Sends the control data to the ControlStream object.
         """
         print(f"Sending control data: {self.control_data}")
-        self.cs.send_control(self.control_data)
+        nparr = np_data = np.array(self.control_data, dtype=np.float32)
+        self.cs.send_control(nparr)
 
 
     def set_control_data(self, control_data):

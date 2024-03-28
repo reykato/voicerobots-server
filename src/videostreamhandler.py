@@ -38,7 +38,7 @@ class VideoStreamHandler(ThreadedEvent):
             except TimeoutError:
                 continue
 
-            if len(data) > 100:
+            if len(data) < 100:
                 frame_info = pickle.loads(data)
 
                 if frame_info:
@@ -55,17 +55,17 @@ class VideoStreamHandler(ThreadedEvent):
                             buffer = data
                         else:
                             buffer += data
-
                     
 
-                    # Convert the JPEG buffer to a numpy array
-                    frame = np.frombuffer(buffer, np.uint8)
-                    
-                    # Decode the JPEG buffer into an OpenCV image
-                    image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+                    if buffer:
+                        # Convert the JPEG buffer to a numpy array
+                        frame = np.frombuffer(buffer, np.uint8)
+                        
+                        # Decode the JPEG buffer into an OpenCV image
+                        image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
-                    if image is not None:
-                        self._process_image(image)
+                        if image is not None:
+                            self._process_image(image)
 
     def _process_image(self, image):
         image_blurred = cv2.GaussianBlur(image, (15, 15), 0)

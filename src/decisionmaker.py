@@ -32,7 +32,7 @@ class DecisionMaker(ThreadedEvent):
         self.lidar_scan = None
 
         # hold the control data to be sent to the robot
-        self.control_data = (0, 0)
+        self.control_data = [0.0, 0.0]
         
         # flag to indicate if the control data has been manually set using the joystick interface
         self.control_data_override = False
@@ -60,7 +60,7 @@ class DecisionMaker(ThreadedEvent):
                 stop_robot = self._make_lidar_decision(self.lidar_scan)
 
                 if stop_robot:                  # if the robot is too close to an object, stop the robot
-                    self.control_data = (0, 0)
+                    self.control_data = [0.0, 0.0]
                 else:                           # if the robot is not too close to an object
                     self.control_data = video_control_decision
 
@@ -69,7 +69,7 @@ class DecisionMaker(ThreadedEvent):
             sleep(0.1)
 
 
-    def _make_video_decision(self, target_center:tuple) -> tuple:
+    def _make_video_decision(self, target_center:list) -> list:
         """
         Makes a decision based on the target_center attribute.
 
@@ -81,23 +81,23 @@ class DecisionMaker(ThreadedEvent):
         """
         print(f"Target Center: {target_center}, making video decision...")
 
-        if target_center != (0, 0):
+        if target_center != [0.0, 0.0]:
             # if the target is to the right of the center, move right
             if target_center[0] > 560:
-                return (float((480-target_center[0])/-480), float(0))
+                return [(480-target_center[0])/-480, 0]
             # if the target is to the left of the center, move left
             elif target_center[0] <= 400:
-                return (float(((480-target_center[0])/480)), float(0))
+                return [(480-target_center[0])/480, 0]
             # if the target is at the center, move forward
             else:
-                return (float(0), float(0.4))
+                return [0.0, 0.4]
     
     def _make_lidar_decision(self, lidar_scan:list) -> bool:
         """
         Makes a decision based on the lidar_scan attribute.
 
         Parameters:
-        - lidar_scan list(tuple): Tuple containing the lidar scan data.
+        - lidar_scan: Tuple containing the lidar scan data.
 
         Returns:
         - bool: True if the robot is too close to an object, False otherwise.
@@ -131,14 +131,14 @@ class DecisionMaker(ThreadedEvent):
         self.cs.send_control(self.control_data)
 
 
-    def set_control_data(self, control_data:tuple):
+    def set_control_data(self, control_data):
         """
         Sets the control data attribute.
 
         Parameters:
-        - control_data (tuple): Tuple (x, y) containing the x and y joystick values.
+        - control_data: Tuple (x, y) containing the x and y joystick values.
         """
-        if control_data[0] != 0 and control_data[1] != 0:
+        if control_data != [0.0, 0.0]:
             self.control_data = control_data
             self.control_data_override = True
         else:

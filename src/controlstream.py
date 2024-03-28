@@ -33,7 +33,7 @@ class ControlStream():
     def stop(self):
         self._after_stopping()
 
-    def send_control(self, control_data:tuple):
+    def send_control(self, control_data):
         if self.client_socket is not None:
             byte_stream = np.array(control_data).tobytes()
             try:

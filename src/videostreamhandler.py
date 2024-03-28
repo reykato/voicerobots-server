@@ -99,7 +99,7 @@ class VideoStreamHandler(ThreadedEvent):
                 cY = 0                            
 
             # store the center point
-            self.center = (cX, cY)
+            self.center = [cX, cY]
             
             # draw a white dot at the coordinates of the center_of_red
             cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)

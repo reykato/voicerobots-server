@@ -38,7 +38,7 @@ class VideoStreamHandler(ThreadedEvent):
             except TimeoutError:
                 continue
 
-            if len(data) < 100:
+            if len(data) > 100:
                 frame_info = pickle.loads(data)
 
                 if frame_info:
@@ -55,6 +55,8 @@ class VideoStreamHandler(ThreadedEvent):
                             buffer = data
                         else:
                             buffer += data
+
+                    
 
                     # Convert the JPEG buffer to a numpy array
                     frame = np.frombuffer(buffer, np.uint8)

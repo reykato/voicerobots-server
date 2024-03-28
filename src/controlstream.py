@@ -35,7 +35,7 @@ class ControlStream():
 
     def send_control(self, control_data):
         if self.client_socket is not None:
-            byte_stream = control_data.tobytes()
+            byte_stream = np.array(control_data).tobytes()
             try:
                 self.client_socket.sendall(byte_stream)
             except socket.error as e:

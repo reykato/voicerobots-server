@@ -40,34 +40,46 @@ class VideoStreamHandler(ThreadedEvent):
 
             if len(data) < 100:
                 frame_info = pickle.loads(data)
+                frame = self._get_image(frame_info)
 
-                if frame_info:
-                    nums_of_packs = frame_info["packs"]
-                    buffer = None
-
-                    for i in range(nums_of_packs):
-                        try:
-                            data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
-                        except TimeoutError:
-                            continue
-
-                        if i == 0:
-                            buffer = data
-                        else:
-                            buffer += data
+                if frame is not None:
+                    self._process_image(frame)
                     
 
-                    if buffer:
-                        # Convert the JPEG buffer to a numpy array
-                        frame = np.frombuffer(buffer, np.uint8)
-                        
-                        # Decode the JPEG buffer into an OpenCV image
-                        image = cv2.imdecode(frame, cv2.IMREAD_COLOR)
+    def _get_image(self, frame_info):
+        """
+        Receive the frame data from the socket and return the frame as a numpy array.
 
-                        if image is not None:
-                            self._process_image(image)
+        Parameters:
+        - frame_info (dict): Information about the frame to be received.
+        """
+        if frame_info is not None:
+            # Get the number of packets to be received
+            packs_incoming = frame_info["packs"]
+
+            buffer = None
+
+            # Receive the packets
+            for i in range(packs_incoming):
+                try:
+                    data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+                except TimeoutError:
+                    continue
+
+                if i == 0:
+                    buffer = data
+                else:
+                    buffer += data
+
+            if buffer is not None:
+                # Convert the JPEG buffer to a numpy array
+                frame = np.frombuffer(buffer, np.uint8)
+                
+                # Decode the JPEG buffer into an OpenCV image
+                return cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
     def _process_image(self, image):
+        # Blur the image to reduce noise
         image_blurred = cv2.GaussianBlur(image, (15, 15), 0)
 
         # Convert the image to HSV
@@ -78,22 +90,29 @@ class VideoStreamHandler(ThreadedEvent):
         # upper_red = np.array([10, 255, 255])
 
         # Defining the range of green color in HSV space
-        lower_green = np.array([36, 0, 0])
-        upper_green = np.array([86, 255, 255])
+        lower_green = np.array([80, 100, 100])
+        upper_green = np.array([150, 255, 255])
     
         # preparing the mask to overlay 
         mask = cv2.inRange(hsv, lower_green, upper_green)
 
         # find contours in the mask
-        contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(mask, cv2.RETR_LIST,
+                                        cv2.CHAIN_APPROX_SIMPLE)
 
         # find the largest contour and its center
         if len(contours) > 0:
+            # get the max size contour based on its area
             max_contour = max(contours, key=cv2.contourArea)
+
+            # draw the contour on the image
             cv2.drawContours(image, max_contour, -1, (0,255,0), 3)
 
+            # get the center of the contour
             M = cv2.moments(max_contour)
-            if M["m00"] != 0:
+            if M["m00"] != 0: # prevent division by zero
+                # divide the first moment (m10, m01) by the zeroth moment
+                # (which is the area of the contour) to get the center
                 cX = int(M["m10"] / M["m00"])
                 cY = int(M["m01"] / M["m00"])
             else:
@@ -103,7 +122,7 @@ class VideoStreamHandler(ThreadedEvent):
             # store the center point
             self.center = [cX, cY]
             
-            # draw a white dot at the coordinates of the center_of_red
+            # draw a white dot at the coordinates of the center
             cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
         
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 80]

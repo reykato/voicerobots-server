@@ -90,8 +90,8 @@ class VideoStreamHandler(ThreadedEvent):
         # upper_red = np.array([10, 255, 255])
 
         # Defining the range of green color in HSV space
-        lower_green = np.array([36, 0, 0])
-        upper_green = np.array([86, 255, 255])
+        lower_green = np.array([40, 30, 30])
+        upper_green = np.array([90, 255, 255])
     
         # preparing the mask to overlay 
         mask = cv2.inRange(hsv, lower_green, upper_green)

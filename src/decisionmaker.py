@@ -99,7 +99,7 @@ class DecisionMaker(ThreadedEvent):
         - bool: True if the robot is too close to an object, False otherwise.
         """
         if len(lidar_scan) == 0:
-            print("No lidar scan data...")
+            print(f"No lidar scan data...")
             return False
         else:
             print(f"Making lidar decision...")

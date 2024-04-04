@@ -26,10 +26,8 @@ class DecisionMaker_Test(unittest.TestCase):
         handle_stream_thread = threading.Thread(target=decision_maker._handle_stream)
         handle_stream_thread.start()
 
-        # Wait for a specific duration (e.g., 1 second)
+        # Wait a bit, then set the stop_event to break out of the loop
         time.sleep(1)
-
-        # Set the stop_event to break out of the loop
         decision_maker.stop_event.set()
 
         # Join the thread to ensure it finishes
@@ -52,10 +50,8 @@ class DecisionMaker_Test(unittest.TestCase):
         handle_stream_thread = threading.Thread(target=decision_maker._handle_stream)
         handle_stream_thread.start()
 
-        # Wait for a specific duration (e.g., 1 second)
+        # Wait a bit, then set the stop_event to break out of the loop
         time.sleep(1)
-
-        # Set the stop_event to break out of the loop
         decision_maker.stop_event.set()
 
         # Join the thread to ensure it finishes

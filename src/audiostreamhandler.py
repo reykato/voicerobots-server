@@ -2,6 +2,9 @@ from threadedevent import ThreadedEvent
 import numpy as np
 import socket
 import pyaudio
+import whisper
+import torch
+import pickle
 
 class AudioStreamHandler(ThreadedEvent):
     MAX_PACKET_SIZE = 65540
@@ -16,24 +19,41 @@ class AudioStreamHandler(ThreadedEvent):
         - port (int): Port which the receiving machine is listening to.
         (e.g. 5100)
         """
-
+        
+        super().__init__()
         self.host = host
         self.port = port
+        self.model = whisper.load_model("tiny.en")
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
         self.play=pyaudio.PyAudio()
-        self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True, frames_per_buffer=1024)
+        self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True, frames_per_buffer=1024)
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
-            data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
-
-            self.frame = np.frombuffer(data, dtype=np.uint8)
-            self.frame_is_new = True
-
-            self.stream_play.write(data)
+            try:
+                data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+            except TimeoutError:
+                continue
+            if len(data) < 100:
+                frame_info = pickle.loads(data)
+                packs_incoming = frame_info["packs"]
+                buffer = None
+                for i in range(packs_incoming):
+                    try:
+                        data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+                    except TimeoutError:
+                        continue
+                    if i == 0:
+                        buffer = data
+                    else:
+                        buffer += data
+                frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
+                result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
+                print(result['text'].strip())
+                self.stream_play.write(buffer)
                 
     def _after_stopping(self):
         self.stream_play.stop_stream()

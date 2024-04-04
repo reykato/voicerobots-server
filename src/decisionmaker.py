@@ -60,7 +60,7 @@ class DecisionMaker(ThreadedEvent):
                 else:                           # if the robot is not too close to an object
                     self.control_data = video_control_decision
 
-                # send the control data to the ControlStream object
+            # send the control data to the ControlStream object
             self._send_control()
             sleep(0.1)
 

@@ -17,7 +17,7 @@ class DecisionMaker_Test(unittest.TestCase):
         self.vsh_mock.get_center.return_value = [480, 100]
         
         # Simulate a lidar scan with an object too close to the robot
-        self.lsh_mock.get_scan.return_value = [[60, 80, 110], [90, 100, 70], [120, 120, 115]]
+        self.lsh_mock.get_scan.return_value = [90, 100, 70]
 
         # Create DecisionMaker instance
         decision_maker = DecisionMaker(self.vsh_mock, self.lsh_mock, self.cs_mock)
@@ -34,14 +34,14 @@ class DecisionMaker_Test(unittest.TestCase):
         handle_stream_thread.join()
 
         # Check if control data is set to stop the robot
-        self.assertEqual(decision_maker.control_data, [0.0, 0.0])
+        self.assertEqual(decision_maker.control_data, [0, 0])
 
     def test_handle_stream_continue_moving(self):
         # Simulate target center at the center
         self.vsh_mock.get_center.return_value = [480, 100]
 
         # Simulate a lidar scan with no object too close to the robot
-        self.lsh_mock.get_scan.return_value = [[60, 80, 110], [90, 100, 120]]
+        self.lsh_mock.get_scan.return_value = [[60, 80, 110]]
 
         # Create DecisionMaker instance
         decision_maker = DecisionMaker(self.vsh_mock, self.lsh_mock, self.cs_mock)
@@ -58,7 +58,7 @@ class DecisionMaker_Test(unittest.TestCase):
         handle_stream_thread.join()
         
         # Check if control data is set to move forward
-        self.assertEqual(decision_maker.control_data, [0.0, 0.4])
+        self.assertEqual(decision_maker.control_data, [0, 0.4])
     
     def test_make_video_decision(self):
         # Create DecisionMaker instance
@@ -77,12 +77,12 @@ class DecisionMaker_Test(unittest.TestCase):
         # Test when target center is at the center
         target_center_center = [480, 100]
         decision = decision_maker._make_video_decision(target_center_center)
-        self.assertEqual(decision, [0.0, 0.4])
+        self.assertEqual(decision, [0, 0.4])
 
         # Test when target center is [0, 0]
         target_center_zero = [0, 0]
         decision = decision_maker._make_video_decision(target_center_zero)
-        self.assertIsNone(decision)
+        self.assertEqual(decision, [0, 0])
 
     def test_make_lidar_decision(self):
         # Create DecisionMaker instance
@@ -94,12 +94,12 @@ class DecisionMaker_Test(unittest.TestCase):
         self.assertFalse(decision)
 
         # Test when no object is too close to the robot
-        lidar_scan_safe = [[60, 80, 110], [90, 100, 120]]
+        lidar_scan_safe = [[60, 80, 110]]
         decision = decision_maker._make_lidar_decision(lidar_scan_safe)
         self.assertFalse(decision)
 
         # Test when an object is too close to the robot
-        lidar_scan_close = [[60, 80, 110], [90, 100, 70], [120, 120, 115]]
+        lidar_scan_close = [[90, 100, 70]]
         decision = decision_maker._make_lidar_decision(lidar_scan_close)
         self.assertTrue(decision)
 

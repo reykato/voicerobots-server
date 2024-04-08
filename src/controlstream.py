@@ -12,7 +12,7 @@ class ControlStream():
     server_socket = None
     client_socket = None
 
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int):
         self.host = host
         self.port = port
 

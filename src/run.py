@@ -30,6 +30,9 @@ lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 dm = DecisionMaker(vsh, lsh, cs)
 
 def gen_video_frame():
+    """
+    Gets frames from the VideoStreamHandler object and yields them as a byte stream for display on the webpage.
+    """
     while True:
         frame = vsh.get_frame()
         if frame is not None and type(frame) == np.ndarray:
@@ -40,6 +43,9 @@ def gen_video_frame():
                 break
 
 def gen_audio_to_text():
+    """
+    Get audio from the AudioStreamHandler object and transcribe it to text using the whisper ML model.
+    """
     buffer = np.ndarray(shape=(0,))
 
     while True:
@@ -54,6 +60,9 @@ def gen_audio_to_text():
                 yield result["text"]
 
 def gen_lidar_frame():
+    """
+    Gets frames from the LidarStreamHandler object and yields them as a byte stream for display on the webpage.
+    """
     while True:
         frame = lsh.get_frame()
         if frame and type(frame) == np.ndarray:
@@ -68,6 +77,9 @@ def gen_audio():
 
 @socketio.on('json')
 def handle_control(json):
+    """
+    Handles control data sent from the joystick on the webpage and sets it in the DecisionMaker object.
+    """
     # separate x and y from the json into two variables for easier use
     data = [float(json['x']) / 100.0, float(json['y']) / 100.0]
     np_data = np.array(data, dtype=np.float32)

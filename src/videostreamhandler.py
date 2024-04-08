@@ -16,7 +16,7 @@ class VideoStreamHandler(ThreadedEvent):
 
     MAX_PACKET_SIZE = 65540
 
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int):
         super().__init__()
         self.host = host
         self.port = port
@@ -44,12 +44,12 @@ class VideoStreamHandler(ThreadedEvent):
                     self._process_image(frame)
                     
 
-    def _get_image(self, frame_info):
+    def _get_image(self, frame_info: dict):
         """
         Receive the frame data from the socket and return the frame as a numpy array.
 
         Parameters:
-        - frame_info (dict): Information about the frame to be received.
+            frame_info (dict): Information about the frame to be received.
         """
         if frame_info is not None:
             # Get the number of packets to be received
@@ -77,6 +77,13 @@ class VideoStreamHandler(ThreadedEvent):
                 return cv2.imdecode(frame, cv2.IMREAD_COLOR)
 
     def _process_image(self, image):
+        """
+        Process the image to detect the center of a green object. Also
+        generates a new frame to be displayed on the webpage.
+
+        Parameters:
+            image (numpy.ndarray): The image to be processed.
+        """
         # Blur the image to reduce noise
         image_blurred = cv2.GaussianBlur(image, (15, 15), 0)
 
@@ -129,12 +136,18 @@ class VideoStreamHandler(ThreadedEvent):
         self.frame_is_new = True
 
     def get_center(self):
+        """
+        Returns the center (x, y) of the green object in the frame.
+        """
         return self.center
 
     def _after_stopping(self):
         self.socket.close()
 
     def get_frame(self):
+        """
+        Returns the latest frame generated from the video stream.
+        """
         return_value = self.frame if self.frame_is_new else None
         self.frame_is_new = False
         return return_value

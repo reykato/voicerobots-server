@@ -16,7 +16,7 @@ class LidarStreamHandler(ThreadedEvent):
         host (str): Address of the receiving machine. (e.g. "70.224.3.88")
         port (int): Port which the receiving machine is listening to. (e.g. 5100)
     """
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int):
         super().__init__()
         self.host = host
         self.port = port
@@ -59,6 +59,9 @@ class LidarStreamHandler(ThreadedEvent):
                 
 
     def _setup_mpl(self):
+        """
+        Set up the matplotlib figure and axes before generating lidar visualizations.
+        """
         self.figure = plt.figure(figsize=(6, 6), dpi=80, facecolor='black', edgecolor='black')
         self.ax = plt.subplot(111, projection='polar')
         self.line = self.ax.scatter([0, 0], [0, 0], s=8, c=[0, 8000], cmap='viridis', lw=0)
@@ -71,6 +74,9 @@ class LidarStreamHandler(ThreadedEvent):
         self.bg = self.figure.canvas.copy_from_bbox(self.ax.bbox)
         
     def _gen_frame(self):
+        """
+        Generate a visualization of the lidar scan.
+        """
         if self.scan is not None and len(self.scan) > 0:
             offsets = np.array([(np.radians(meas[1]), meas[2]) for meas in self.scan])
             self.line.set_offsets(offsets)
@@ -94,9 +100,15 @@ class LidarStreamHandler(ThreadedEvent):
             print("lidar frame generated!!")
 
     def get_scan(self):
+        """
+        Get the most recent lidar scan.
+        """
         return self.scan
 
     def get_frame(self):
+        """
+        Get the most recent lidar visualization.
+        """
         return_value = np.asarray(self.frame) if self.frame_is_new else None
         self.frame_is_new = False
         return return_value

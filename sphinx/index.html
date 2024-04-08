@@ -37,6 +37,24 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">threadedevent.</span></span><span class="sig-name descname"><span class="pre">ThreadedEvent</span></span><a class="headerlink" href="#threadedevent.ThreadedEvent" title="Link to this definition">¶</a></dt>
 <dd><p>Abstracts threading for classes that need to run a loop in a separate thread.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="threadedevent.ThreadedEvent._after_stopping">
+<span class="sig-name descname"><span class="pre">_after_stopping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#threadedevent.ThreadedEvent._after_stopping" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute after stopping the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threadedevent.ThreadedEvent._before_starting">
+<span class="sig-name descname"><span class="pre">_before_starting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#threadedevent.ThreadedEvent._before_starting" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute before starting the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="threadedevent.ThreadedEvent._handle_stream">
+<span class="sig-name descname"><span class="pre">_handle_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#threadedevent.ThreadedEvent._handle_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Processes packets into data and calls functions for additional processing.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="threadedevent.ThreadedEvent.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#threadedevent.ThreadedEvent.start" title="Link to this definition">¶</a></dt>
 <dd><p>Executes code in <cite>_before_starting</cite>, then opens thread on
@@ -63,6 +81,25 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="stream.Stream._after_stopping">
+<span class="sig-name descname"><span class="pre">_after_stopping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stream.Stream._after_stopping" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute after stopping the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stream.Stream._before_starting">
+<span class="sig-name descname"><span class="pre">_before_starting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stream.Stream._before_starting" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute before starting the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="stream.Stream._handle_stream">
+<span class="sig-name descname"><span class="pre">_handle_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stream.Stream._handle_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Processes data into packets and sends them to
+the receiving machine. Should contain a loop.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="stream.Stream.start">
 <span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stream.Stream.start" title="Link to this definition">¶</a></dt>
@@ -107,18 +144,67 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="decisionmaker.DecisionMaker._handle_stream">
+<span class="sig-name descname"><span class="pre">_handle_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decisionmaker.DecisionMaker._handle_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Updates the target_center, lidar_scan, and control_data attributes with the most recent data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="decisionmaker.DecisionMaker._make_lidar_decision">
+<span class="sig-name descname"><span class="pre">_make_lidar_decision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lidar_scan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#decisionmaker.DecisionMaker._make_lidar_decision" title="Link to this definition">¶</a></dt>
+<dd><p>Makes a decision based on the lidar_scan attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lidar_scan</strong> – Tuple containing the lidar scan data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the robot is too close to an object, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="decisionmaker.DecisionMaker._make_video_decision">
+<span class="sig-name descname"><span class="pre">_make_video_decision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#decisionmaker.DecisionMaker._make_video_decision" title="Link to this definition">¶</a></dt>
+<dd><p>Makes a decision based on the target_center attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_center</strong> (<em>tuple</em>) – Tuple (x, y) containing the x and y coordinates of the target center.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple (x, y) containing the x and y joystick values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="decisionmaker.DecisionMaker._send_control">
+<span class="sig-name descname"><span class="pre">_send_control</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decisionmaker.DecisionMaker._send_control" title="Link to this definition">¶</a></dt>
+<dd><p>Sends the control data to the ControlStream object.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="decisionmaker.DecisionMaker.set_control_data">
 <span class="sig-name descname"><span class="pre">set_control_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#decisionmaker.DecisionMaker.set_control_data" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the control data attribute.</p>
-<p>Parameters:
-- control_data: Tuple (x, y) containing the x and y joystick values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>control_data</strong> – Tuple (x, y) containing the x and y joystick values.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class" id="module-controlstream">
 <dt class="sig sig-object py" id="controlstream.ControlStream">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">controlstream.</span></span><span class="sig-name descname"><span class="pre">ControlStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">controlstream.</span></span><span class="sig-name descname"><span class="pre">ControlStream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream" title="Link to this definition">¶</a></dt>
 <dd><p>Class for sending robot control data over TCP.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -128,6 +214,22 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="controlstream.ControlStream._after_stopping">
+<span class="sig-name descname"><span class="pre">_after_stopping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream._after_stopping" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="controlstream.ControlStream._before_starting">
+<span class="sig-name descname"><span class="pre">_before_starting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream._before_starting" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="controlstream.ControlStream._wait_for_connection">
+<span class="sig-name descname"><span class="pre">_wait_for_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream._wait_for_connection" title="Link to this definition">¶</a></dt>
+<dd><p>Waits for a client to connect to the server socket.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="controlstream.ControlStream.client_socket">
 <span class="sig-name descname"><span class="pre">client_socket</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#controlstream.ControlStream.client_socket" title="Link to this definition">¶</a></dt>
@@ -136,7 +238,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="controlstream.ControlStream.send_control">
 <span class="sig-name descname"><span class="pre">send_control</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#controlstream.ControlStream.send_control" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Sends control data to the robot.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="controlstream.ControlStream.server_socket">
@@ -157,7 +260,7 @@
 
 <dl class="py class" id="module-videostreamhandler">
 <dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">videostreamhandler.</span></span><span class="sig-name descname"><span class="pre">VideoStreamHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">videostreamhandler.</span></span><span class="sig-name descname"><span class="pre">VideoStreamHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler" title="Link to this definition">¶</a></dt>
 <dd><p>Class for handling video IP streams.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -173,20 +276,63 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler._after_stopping">
+<span class="sig-name descname"><span class="pre">_after_stopping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler._after_stopping" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute after stopping the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler._before_starting">
+<span class="sig-name descname"><span class="pre">_before_starting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler._before_starting" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute before starting the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler._get_image">
+<span class="sig-name descname"><span class="pre">_get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler._get_image" title="Link to this definition">¶</a></dt>
+<dd><p>Receive the frame data from the socket and return the frame as a numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frame_info</strong> (<em>dict</em>) – Information about the frame to be received.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler._handle_stream">
+<span class="sig-name descname"><span class="pre">_handle_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler._handle_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Processes packets into data and calls functions for additional processing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler._process_image">
+<span class="sig-name descname"><span class="pre">_process_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler._process_image" title="Link to this definition">¶</a></dt>
+<dd><p>Process the image to detect the center of a green object. Also
+generates a new frame to be displayed on the webpage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>numpy.ndarray</em>) – The image to be processed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler.get_center">
 <span class="sig-name descname"><span class="pre">get_center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler.get_center" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the center (x, y) of the green object in the frame.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="videostreamhandler.VideoStreamHandler.get_frame">
 <span class="sig-name descname"><span class="pre">get_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#videostreamhandler.VideoStreamHandler.get_frame" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the latest frame generated from the video stream.</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py class" id="module-lidarstreamhandler">
 <dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lidarstreamhandler.</span></span><span class="sig-name descname"><span class="pre">LidarStreamHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lidarstreamhandler.</span></span><span class="sig-name descname"><span class="pre">LidarStreamHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler" title="Link to this definition">¶</a></dt>
 <dd><p>Class for handling lidar IP streams.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -197,14 +343,46 @@
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler._after_stopping">
+<span class="sig-name descname"><span class="pre">_after_stopping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler._after_stopping" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute after stopping the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler._before_starting">
+<span class="sig-name descname"><span class="pre">_before_starting</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler._before_starting" title="Link to this definition">¶</a></dt>
+<dd><p>Code to execute before starting the loop <cite>_handle_stream</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler._gen_frame">
+<span class="sig-name descname"><span class="pre">_gen_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler._gen_frame" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a visualization of the lidar scan.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler._handle_stream">
+<span class="sig-name descname"><span class="pre">_handle_stream</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler._handle_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Processes packets into data and calls functions for additional processing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler._setup_mpl">
+<span class="sig-name descname"><span class="pre">_setup_mpl</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler._setup_mpl" title="Link to this definition">¶</a></dt>
+<dd><p>Set up the matplotlib figure and axes before generating lidar visualizations.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler.get_frame">
 <span class="sig-name descname"><span class="pre">get_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler.get_frame" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the most recent lidar visualization.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lidarstreamhandler.LidarStreamHandler.get_scan">
 <span class="sig-name descname"><span class="pre">get_scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lidarstreamhandler.LidarStreamHandler.get_scan" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the most recent lidar scan.</p>
+</dd></dl>
 
 </dd></dl>
 

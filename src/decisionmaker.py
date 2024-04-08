@@ -70,10 +70,10 @@ class DecisionMaker(ThreadedEvent):
         Makes a decision based on the target_center attribute.
 
         Parameters:
-        - target_center (tuple): Tuple (x, y) containing the x and y coordinates of the target center.
+            target_center (tuple): Tuple (x, y) containing the x and y coordinates of the target center.
 
         Returns:
-        - tuple: Tuple (x, y) containing the x and y joystick values.
+            tuple: Tuple (x, y) containing the x and y joystick values.
         """
         print(f"Target Center: {target_center}, making video decision...")
 
@@ -95,10 +95,10 @@ class DecisionMaker(ThreadedEvent):
         Makes a decision based on the lidar_scan attribute.
 
         Parameters:
-        - lidar_scan: Tuple containing the lidar scan data.
+            lidar_scan: Tuple containing the lidar scan data.
 
         Returns:
-        - bool: True if the robot is too close to an object, False otherwise.
+            bool: True if the robot is too close to an object, False otherwise.
         """
         if len(lidar_scan) == 0:
             print(f"No lidar scan data...")
@@ -136,7 +136,7 @@ class DecisionMaker(ThreadedEvent):
         Sets the control data attribute.
 
         Parameters:
-        - control_data: Tuple (x, y) containing the x and y joystick values.
+            control_data: Tuple (x, y) containing the x and y joystick values.
         """
         if control_data[0] != 0 and control_data[1] != 0:
             self.control_data = control_data

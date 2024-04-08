@@ -16,7 +16,7 @@ class AudioStreamHandler(ThreadedEvent):
     """
     MAX_PACKET_SIZE = 65540
 
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int):
         super().__init__()
         self.host = host
         self.port = port

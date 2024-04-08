@@ -60,7 +60,7 @@ class DecisionMaker(ThreadedEvent):
                 else:                           # if the robot is not too close to an object
                     self.control_data = video_control_decision
 
-                # send the control data to the ControlStream object
+            # send the control data to the ControlStream object
             self._send_control()
             sleep(0.1)
 
@@ -77,7 +77,9 @@ class DecisionMaker(ThreadedEvent):
         """
         print(f"Target Center: {target_center}, making video decision...")
 
-        if target_center[0] != 0 and target_center[1] != 0:
+        if target_center[0] == 0 and target_center[1] == 0:
+            return [0.0, 0.0]
+        else:
             # if the target is to the right of the center, move right (divide by 960 not 480 max output of 0.5)
             if target_center[0] > 560:
                 return [(target_center[0]-480)/960, 0]

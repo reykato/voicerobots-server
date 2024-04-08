@@ -7,6 +7,15 @@ from lidarstreamhandler import LidarStreamHandler
 
 
 class DecisionMaker(ThreadedEvent):
+    """
+    Class for making decisions based on the input streams.
+
+    Parameters:
+        vsh (VideoStreamHandler): VideoStreamHandler object.
+        lsh (LidarStreamHandler): LidarStreamHandler object.
+        cs (ControlStream): ControlStream object (for output).
+    """
+    
     # angle range for the lidar scan to consider as the front of the robot (in degrees)
     LIDAR_START_ANGLE = 60
     LIDAR_END_ANGLE   = 120
@@ -15,15 +24,6 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 100
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream):
-        """
-        Class for making decisions based on the input streams.
-
-        Parameters:
-        - vsh (VideoStreamHandler): VideoStreamHandler object.
-        - lsh (LidarStreamHandler): LidarStreamHandler object.
-        - cs (ControlStream): ControlStream object (for output).
-        """
-
         super().__init__()
         self.vsh = vsh
         self.lsh = lsh

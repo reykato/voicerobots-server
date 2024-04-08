@@ -2,6 +2,13 @@ import socket
 import numpy as np
 
 class ControlStream():
+    """
+    Class for sending robot control data over TCP.
+
+    Parameters:
+        host (str): Address of the receiving machine. (e.g. "70.224.3.88")
+        port (int): Port which the receiving machine is listening to. (e.g. 5100)
+    """
     server_socket = None
     client_socket = None
 
@@ -10,6 +17,9 @@ class ControlStream():
         self.port = port
 
     def _wait_for_connection(self):
+        """
+        Waits for a client to connect to the server socket.
+        """
         print("Waiting for connection...")
         if self.client_socket:
             self.client_socket.close()
@@ -34,6 +44,9 @@ class ControlStream():
         self._after_stopping()
 
     def send_control(self, control_data):
+        """
+        Sends control data to the robot.
+        """
         if self.client_socket is not None:
             byte_stream = np.array(control_data).tobytes()
             try:

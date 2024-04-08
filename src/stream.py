@@ -1,17 +1,14 @@
 import threading
 
 class Stream():
+    """
+    Class for streaming UDP data.
+
+    Parameters:
+        host (str): Address of the receiving machine. (e.g. "70.224.3.88")
+        port (int): Port which the receiving machine is listening to. (e.g. 5100)
+    """
     def __init__(self, host: str, port: int):
-        """
-        Class for streaming UDP data.
-
-        Parameters:
-        - host (str): Address of the receiving machine.
-        (e.g. "70.224.3.88")
-        - port (int): Port which the receiving machine is listening to.
-        (e.g. 5100)
-        """
-
         self.host = host
         self.port = port
 

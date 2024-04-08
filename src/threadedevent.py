@@ -1,6 +1,9 @@
 import threading
 
 class ThreadedEvent():
+    """
+    Abstracts threading for classes that need to run a loop in a separate thread.
+    """
     def __init__(self):
         self.stop_event = threading.Event()
         self.loop_thread = threading.Thread(target=self._handle_stream)

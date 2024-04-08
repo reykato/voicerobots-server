@@ -7,19 +7,16 @@ import torch
 import pickle
 
 class AudioStreamHandler(ThreadedEvent):
+    """
+    Class for handling audio IP streams.
+
+    Parameters:
+        host (str): Address of the receiving machine. (e.g. "70.224.3.88")
+        port (int): Port which the receiving machine is listening to. (e.g. 5100)
+    """
     MAX_PACKET_SIZE = 65540
 
     def __init__(self, host, port):
-        """
-        Class for handling audio IP streams.
-
-        Parameters:
-        - host (str): Address of the receiving machine.
-        (e.g. "70.224.3.88")
-        - port (int): Port which the receiving machine is listening to.
-        (e.g. 5100)
-        """
-        
         super().__init__()
         self.host = host
         self.port = port

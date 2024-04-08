@@ -9,16 +9,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 class LidarStreamHandler(ThreadedEvent):
-    def __init__(self, host, port):
-        """
-        Class for handling lidar IP streams.
+    """
+    Class for handling lidar IP streams.
 
-        Parameters:
-        - host (str): Address of the receiving machine.
-        (e.g. "70.224.3.88")
-        - port (int): Port which the receiving machine is listening to.
-        (e.g. 5100)
-        """
+    Parameters:
+        host (str): Address of the receiving machine. (e.g. "70.224.3.88")
+        port (int): Port which the receiving machine is listening to. (e.g. 5100)
+    """
+    def __init__(self, host, port):
         super().__init__()
         self.host = host
         self.port = port

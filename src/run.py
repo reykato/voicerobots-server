@@ -27,7 +27,7 @@ cs = ControlStream(HOST_IP, CS_PORT)
 ash = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 
-dm = DecisionMaker(vsh, lsh, cs)
+dm = DecisionMaker(vsh, lsh, cs, ash)
 
 def gen_video_frame():
     """Gets frames from the VideoStreamHandler object and yields them as a byte stream for display on the webpage."""

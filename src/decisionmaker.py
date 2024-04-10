@@ -32,7 +32,7 @@ class DecisionMaker(ThreadedEvent):
         self.ash = ash
 
         # holds current robot operating mode
-        self.mode:str = None
+        self.mode:str = 'voice'
         self.stopflag:bool = False
 
         # hold the most recent frame from video, control tuple from joystick, and lidar scan

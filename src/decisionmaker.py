@@ -60,9 +60,6 @@ class DecisionMaker(ThreadedEvent):
                     self.target_center = self.vsh.get_center()
                     self.lidar_scan = self.lsh.get_scan()
                     
-                    # make decisions based on the target_center from the webcam stream
-                    video_control_decision = self._make_video_decision(self.target_center)
-
                     # decide whether the robot is too close to an object based on the lidar scan
                     stop_robot = self._make_lidar_decision(self.lidar_scan)
 
@@ -70,7 +67,7 @@ class DecisionMaker(ThreadedEvent):
                         self.control_data = [0.0, 0.0]
                     else:                           # if the robot is not too close to an object
                         if self.mode == "search":
-                            self.control_data = video_control_decision
+                            self.control_data = self._make_video_decision(self.target_center)
                         elif self.mode == "voice":
                             self.control_data = self._scan_audio_direction(self.ash.get_audio())
 

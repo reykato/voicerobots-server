@@ -49,6 +49,7 @@ def gen_lidar_frame():
             yield (b'--frame\r\n'b'Content-Type: image/png\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
 
 def gen_audio():
+    """Gets audio data from the AudioStreamHandler object and yields it as a byte stream for playback on the webpage."""
     while True:
         audio = ash.get_audio()
         if audio is not None and type(audio) == np.ndarray:

@@ -40,6 +40,12 @@ class AudioStreamHandler(ThreadedEvent):
                 self._transcribe_audio(data)
                 
     def _transcribe_audio(self, data):
+        """
+        Receive the audio data from the socket and transcribe it using the whisper model.
+
+        Parameters:
+            data (bytes): Audio data to be transcribed.
+        """
         frame_info = pickle.loads(data)
         packs_incoming = frame_info["packs"]
         buffer = None
@@ -52,6 +58,7 @@ class AudioStreamHandler(ThreadedEvent):
                 buffer = data
             else:
                 buffer += data
+        
         frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
         result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
         print(result['text'].strip())

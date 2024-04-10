@@ -40,21 +40,6 @@ def gen_video_frame():
             if cv2.waitKey(1) == 27:
                 break
 
-def gen_audio_to_text():
-    """Get audio from the AudioStreamHandler object and transcribe it to text using the whisper ML model."""
-    buffer = np.ndarray(shape=(0,))
-
-    while True:
-        audio = ash.get_audio()
-        if audio is not None and type(audio) == np.ndarray:
-            buffer = np.concatenate((buffer, audio), axis=0)
-            if buffer.size > 1000000:
-                mathonbuffer = buffer.astype(np.float32) / 32768.0
-                result = model.transcribe(mathonbuffer, fp16=torch.cuda.is_available())
-                buffer = np.ndarray(shape=(0,))
-                print(result['text'])
-                yield result["text"]
-
 def gen_lidar_frame():
     """Gets frames from the LidarStreamHandler object and yields them as a byte stream for display on the webpage."""
     while True:
@@ -94,11 +79,6 @@ def lidar_feed():
 @flask_instance.route('/audio_feed')
 def audio_feed():
     return Response(gen_audio(), mimetype='audio/x-wav')
-
-@flask_instance.route('/transcription_feed')
-def transcription_feed():
-    text = gen_audio_to_text()
-    return Response(text, content_type='text/plain')
 
 def main():
     # ash.start()

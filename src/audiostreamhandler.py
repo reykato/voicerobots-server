@@ -21,6 +21,8 @@ class AudioStreamHandler(ThreadedEvent):
         self.host = host
         self.port = port
         self.model = whisper.load_model("tiny.en")
+        self.text = ""
+
 
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -50,6 +52,7 @@ class AudioStreamHandler(ThreadedEvent):
                 frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
                 result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
                 print(result['text'].strip())
+                self.text = result['text'].strip()
                 self.stream_play.write(buffer)
                 
     def _after_stopping(self):
@@ -59,6 +62,4 @@ class AudioStreamHandler(ThreadedEvent):
         self.socket.close()
 
     def get_audio(self):
-        return_value = self.frame if self.frame_is_new else None
-        self.frame_is_new = False
-        return return_value                
+        return self.text      

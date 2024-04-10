@@ -4,6 +4,7 @@ from threadedevent import ThreadedEvent
 from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from lidarstreamhandler import LidarStreamHandler
+from audiostreamhandler import AudioStreamHandler
 
 
 class DecisionMaker(ThreadedEvent):
@@ -23,11 +24,16 @@ class DecisionMaker(ThreadedEvent):
     # distance of closest object for which the lidar should stop the robot (in cm)
     LIDAR_DISTANCE_THRESHOLD = 100
 
-    def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream):
+    def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
         self.vsh = vsh
         self.lsh = lsh
         self.cs = cs
+        self.ash = ash
+
+        # holds current robot operating mode
+        self.mode:str = None
+        self.stopflag:bool = False
 
         # hold the most recent frame from video, control tuple from joystick, and lidar scan
         self.target_center = None
@@ -46,19 +52,27 @@ class DecisionMaker(ThreadedEvent):
         while not self.stop_event.is_set():
 
             if not self.control_data_override:
-                self.target_center = self.vsh.get_center()
-                self.lidar_scan = self.lsh.get_scan()
 
-                # make decisions based on the target_center from the webcam stream
-                video_control_decision = self._make_video_decision(self.target_center)
+                self._make_audio_decision(self.ash.get_audio())
 
-                # decide whether the robot is too close to an object based on the lidar scan
-                stop_robot = self._make_lidar_decision(self.lidar_scan)
+                if not self.stopflag:
 
-                if stop_robot:                  # if the robot is too close to an object, stop the robot
-                    self.control_data = [0.0, 0.0]
-                else:                           # if the robot is not too close to an object
-                    self.control_data = video_control_decision
+                    self.target_center = self.vsh.get_center()
+                    self.lidar_scan = self.lsh.get_scan()
+                    
+                    # make decisions based on the target_center from the webcam stream
+                    video_control_decision = self._make_video_decision(self.target_center)
+
+                    # decide whether the robot is too close to an object based on the lidar scan
+                    stop_robot = self._make_lidar_decision(self.lidar_scan)
+
+                    if stop_robot:                  # if the robot is too close to an object, stop the robot
+                        self.control_data = [0.0, 0.0]
+                    else:                           # if the robot is not too close to an object
+                        if self.mode == "search":
+                            self.control_data = video_control_decision
+                        elif self.mode == "voice":
+                            self.control_data = self._scan_audio_direction(self.ash.get_audio())
 
             # send the control data to the ControlStream object
             self._send_control()
@@ -119,7 +133,30 @@ class DecisionMaker(ThreadedEvent):
                 
             # if no object is too close to the robot
             return False
+        
+    def _make_audio_decision(self, recent_audio:str):
+        if recent_audio.__contains__("stop"):
+            self.stopflag = True
+        elif recent_audio.__contains__("start"):
+            self.stopflag = False
+        elif recent_audio.__contains__("search"):
+            self.mode = "search"
+        elif recent_audio.__contains__("voice"):
+            self.mode = "voice"
+        elif recent_audio.__contains__("green"):
+            self.vsh.set_lower_upper("green")
+        elif recent_audio.__contains__("red"):
+            self.vsh.set_lower_upper("red")
 
+    def _scan_audio_direction(self, recent_audio:str):
+        if recent_audio.__contains__("forward"):
+            return [0.0, 0.3]
+        elif recent_audio.__contains__("left") and recent_audio.__contains__("turn"):
+            return [0.3, 0.0]
+        elif recent_audio.__contains__("right") and recent_audio.__contains__("turn"):
+            return [-0.3, 0.0]
+        elif recent_audio.__contains__("spin"):
+            return [0.5, 0.0]
 
     def _send_control(self):
         """

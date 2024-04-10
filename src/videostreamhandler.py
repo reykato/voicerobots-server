@@ -28,6 +28,8 @@ class VideoStreamHandler(ThreadedEvent):
         self.frame = None
         self.frame_is_new = False
         self.center = (0, 0)
+        self.lower = np.array([40, 30, 30])
+        self.upper = np.array([90, 255, 255])
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
@@ -89,17 +91,9 @@ class VideoStreamHandler(ThreadedEvent):
 
         # Convert the image to HSV
         hsv = cv2.cvtColor(image_blurred, cv2.COLOR_BGR2HSV)
-
-        # Defining the range of red color in HSV space
-        # lower_red = np.array([0, 120, 70])
-        # upper_red = np.array([10, 255, 255])
-
-        # Defining the range of green color in HSV space
-        lower_green = np.array([40, 30, 30])
-        upper_green = np.array([90, 255, 255])
     
         # preparing the mask to overlay 
-        mask = cv2.inRange(hsv, lower_green, upper_green)
+        mask = cv2.inRange(hsv, self.lower, self.upper)
 
         # find contours in the mask
         contours, _ = cv2.findContours(mask, cv2.RETR_LIST,
@@ -151,3 +145,11 @@ class VideoStreamHandler(ThreadedEvent):
         return_value = self.frame if self.frame_is_new else None
         self.frame_is_new = False
         return return_value
+    
+    def set_lower_upper(self, color:str):
+        if color == 'red':
+            self.lower = np.array([0, 120, 70])
+            self.upper = np.array([10, 255, 255])
+        elif color == 'green':
+            self.lower = np.array([40, 30, 30])
+            self.upper = np.array([90, 255, 255])

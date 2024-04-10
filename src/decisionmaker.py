@@ -86,7 +86,7 @@ class DecisionMaker(ThreadedEvent):
         Returns:
             tuple: Tuple (x, y) containing the x and y joystick values.
         """
-        print(f"Target Center: {target_center}, making video decision...")
+        # print(f"Target Center: {target_center}, making video decision...")
 
         if target_center[0] == 0 and target_center[1] == 0:
             return [0.0, 0.0]
@@ -112,10 +112,10 @@ class DecisionMaker(ThreadedEvent):
             bool: True if the robot is too close to an object, False otherwise.
         """
         if len(lidar_scan) == 0:
-            print(f"No lidar scan data...")
+            # print(f"No lidar scan data...")
             return False
         else:
-            print(f"Making lidar decision...")
+            # print(f"Making lidar decision...")
 
             # only consider points within the front of the robot
             lidar_scan_narrow = [x for x in lidar_scan if x[1]
@@ -132,6 +132,7 @@ class DecisionMaker(ThreadedEvent):
             return False
         
     def _make_audio_decision(self, recent_audio:str):
+        print(recent_audio)
         if recent_audio.__contains__("stop"):
             self.stopflag = True
         elif recent_audio.__contains__("start"):

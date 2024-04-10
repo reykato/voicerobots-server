@@ -37,23 +37,26 @@ class AudioStreamHandler(ThreadedEvent):
             except TimeoutError:
                 continue
             if len(data) < 100:
-                frame_info = pickle.loads(data)
-                packs_incoming = frame_info["packs"]
-                buffer = None
-                for i in range(packs_incoming):
-                    try:
-                        data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
-                    except TimeoutError:
-                        continue
-                    if i == 0:
-                        buffer = data
-                    else:
-                        buffer += data
-                frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
-                result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
-                print(result['text'].strip())
-                self.text = result['text'].strip()
-                self.stream_play.write(buffer)
+                self._transcribe_audio(data)
+                
+    def _transcribe_audio(self, data):
+        frame_info = pickle.loads(data)
+        packs_incoming = frame_info["packs"]
+        buffer = None
+        for i in range(packs_incoming):
+            try:
+                data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+            except TimeoutError:
+                continue
+            if i == 0:
+                buffer = data
+            else:
+                buffer += data
+        frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
+        result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
+        print(result['text'].strip())
+        self.text = result['text'].strip()
+        self.stream_play.write(buffer)
                 
     def _after_stopping(self):
         self.stream_play.stop_stream()

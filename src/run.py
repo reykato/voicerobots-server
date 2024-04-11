@@ -1,9 +1,6 @@
-import queue
 from flask import Flask, render_template, Response
 import numpy as np
 import cv2
-import whisper
-import torch
 from flask_socketio import SocketIO
 from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
@@ -19,8 +16,6 @@ VSH_PORT = 5005
 CS_PORT = 5006
 AUS_PORT = 5007
 LSH_PORT = 5008
-
-model = whisper.load_model("tiny.en")
 
 vsh = VideoStreamHandler(HOST_IP, VSH_PORT)
 cs = ControlStream(HOST_IP, CS_PORT)
@@ -82,7 +77,7 @@ def audio_feed():
     return Response(gen_audio(), mimetype='audio/wav')
 
 def main():
-    # ash.start()
+    ash.start()
     vsh.start()
     lsh.start()
     cs.start()
@@ -93,7 +88,7 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
-        # ash.stop()
+        ash.stop()
         vsh.stop()
         lsh.stop()
         cs.stop()

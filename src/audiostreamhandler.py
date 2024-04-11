@@ -61,7 +61,7 @@ class AudioStreamHandler(ThreadedEvent):
         
         frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
         result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
-        print(result['text'].strip())
+        # print(result['text'].strip())
         self.text = result['text'].strip()
         # self.stream_play.write(buffer)
                 

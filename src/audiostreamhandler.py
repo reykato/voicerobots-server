@@ -20,7 +20,7 @@ class AudioStreamHandler(ThreadedEvent):
         super().__init__()
         self.host = host
         self.port = port
-        self.model = whisper.load_model("tiny.en")
+        self.model = whisper.load_model("medium.en")
         self.text = ""
 
 
@@ -60,11 +60,14 @@ class AudioStreamHandler(ThreadedEvent):
             else:
                 self.buffer += data
         
-        frame = np.frombuffer(self.buffer, dtype=np.uint16).astype(np.float32) / 32768.0
-        result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
-        # print(result['text'].strip())
-        self.text = result['text'].strip()
-        # self.stream_play.write(buffer)
+        try:
+            frame = np.frombuffer(self.buffer, dtype=np.uint16).astype(np.float32) / 32768.0
+            result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
+            # print(result['text'].strip())
+            self.text = result['text'].strip()
+            # self.stream_play.write(buffer)
+        except ValueError:
+            pass
                 
     def _after_stopping(self):
         # self.stream_play.stop_stream()

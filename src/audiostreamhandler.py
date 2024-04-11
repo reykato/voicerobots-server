@@ -3,7 +3,7 @@ import numpy as np
 import socket
 import whisper
 import torch
-# import pyaudio
+import pyaudio
 import pickle
 
 class AudioStreamHandler(ThreadedEvent):
@@ -27,8 +27,8 @@ class AudioStreamHandler(ThreadedEvent):
     def _before_starting(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
-        # self.play=pyaudio.PyAudio()
-        # self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True, frames_per_buffer=1024)
+        self.play=pyaudio.PyAudio()
+        self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True, frames_per_buffer=1024)
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
@@ -65,14 +65,14 @@ class AudioStreamHandler(ThreadedEvent):
             result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
             print(result['text'].strip())
             self.text = result['text'].strip()
-            # self.stream_play.write(buffer)
+            self.stream_play.write(self.buffer)
         except ValueError:
             print("Error: Buffer Value Error")
                 
     def _after_stopping(self):
-        # self.stream_play.stop_stream()
-        # self.stream_play.close()
-        # self.play.terminate()
+        self.stream_play.stop_stream()
+        self.stream_play.close()
+        self.play.terminate()
         self.socket.close()
 
     def get_transcription(self):

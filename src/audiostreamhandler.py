@@ -20,7 +20,7 @@ class AudioStreamHandler(ThreadedEvent):
         super().__init__()
         self.host = host
         self.port = port
-        self.model = whisper.load_model("tiny.en")
+        self.model = whisper.load_model("small.en")
         self.text = ""
 
 

@@ -67,7 +67,7 @@ class AudioStreamHandler(ThreadedEvent):
             self.text = result['text'].strip()
             # self.stream_play.write(buffer)
         except ValueError:
-            pass
+            print("Error: " + ValueError)
                 
     def _after_stopping(self):
         # self.stream_play.stop_stream()

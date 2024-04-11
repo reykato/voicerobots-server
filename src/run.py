@@ -51,9 +51,9 @@ def gen_lidar_frame():
 def gen_audio():
     """Gets audio data from the AudioStreamHandler object and yields it as a byte stream for playback on the webpage."""
     while True:
-        audio = ash.get_audio()
-        if audio is not None and type(audio) == np.ndarray:
-            yield audio.tobytes()
+        audio = ash.get_raw_audio()
+        if audio is not None:
+            yield audio
 
 @socketio.on('json')
 def handle_control(json):
@@ -79,7 +79,7 @@ def lidar_feed():
 
 @flask_instance.route('/audio_feed')
 def audio_feed():
-    return Response(gen_audio(), mimetype='audio/x-wav')
+    return Response(gen_audio(), mimetype='audio/wav')
 
 def main():
     # ash.start()

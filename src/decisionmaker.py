@@ -53,7 +53,7 @@ class DecisionMaker(ThreadedEvent):
 
             if not self.control_data_override:
 
-                self._make_audio_decision(self.ash.get_audio())
+                self._make_audio_decision(self.ash.get_transcription())
 
                 if not self.stopflag:
 
@@ -69,7 +69,7 @@ class DecisionMaker(ThreadedEvent):
                         if self.mode == "search":
                             self.control_data = self._make_video_decision(self.target_center)
                         elif self.mode == "voice":
-                            self.control_data = self._scan_audio_direction(self.ash.get_audio())
+                            self.control_data = self._scan_audio_direction(self.ash.get_transcription())
 
             # send the control data to the ControlStream object
             self._send_control()

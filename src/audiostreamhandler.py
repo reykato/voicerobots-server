@@ -48,16 +48,16 @@ class AudioStreamHandler(ThreadedEvent):
         """
         frame_info = pickle.loads(data)
         packs_incoming = frame_info["packs"]
-        buffer = None
+        self.buffer = None
         for i in range(packs_incoming):
             try:
                 data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
             except TimeoutError:
                 continue
             if i == 0:
-                buffer = data
+                self.buffer = data
             else:
-                buffer += data
+                self.buffer += data
         
         frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
         result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
@@ -71,5 +71,8 @@ class AudioStreamHandler(ThreadedEvent):
         # self.play.terminate()
         self.socket.close()
 
-    def get_audio(self):
-        return self.text      
+    def get_transcription(self):
+        return self.text
+
+    def get_raw_audio(self):
+        return self.buffer    

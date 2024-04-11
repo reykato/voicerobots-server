@@ -63,11 +63,11 @@ class AudioStreamHandler(ThreadedEvent):
         try:
             frame = np.frombuffer(self.buffer, dtype=np.uint16).astype(np.float32) / 32768.0
             result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
-            # print(result['text'].strip())
+            print(result['text'].strip())
             self.text = result['text'].strip()
             # self.stream_play.write(buffer)
         except ValueError:
-            print("Error: " + ValueError)
+            print("Error: Buffer Value Error")
                 
     def _after_stopping(self):
         # self.stream_play.stop_stream()

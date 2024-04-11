@@ -132,7 +132,7 @@ class DecisionMaker(ThreadedEvent):
             return False
         
     def _make_audio_decision(self, recent_audio:str):
-        print("Recent Audio:" + recent_audio)
+        # print("Recent Audio:" + recent_audio)
         if recent_audio.__contains__("stop"):
             self.stopflag = True
         elif recent_audio.__contains__("start"):

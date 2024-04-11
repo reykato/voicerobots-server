@@ -37,6 +37,7 @@ class AudioStreamHandler(ThreadedEvent):
             except TimeoutError:
                 continue
             if len(data) < 100:
+                print("receiving audio packets")
                 self._transcribe_audio(data)
                 
     def _transcribe_audio(self, data):
@@ -59,7 +60,7 @@ class AudioStreamHandler(ThreadedEvent):
             else:
                 self.buffer += data
         
-        frame = np.frombuffer(buffer, dtype=np.uint16).astype(np.float32) / 32768.0
+        frame = np.frombuffer(self.buffer, dtype=np.uint16).astype(np.float32) / 32768.0
         result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
         # print(result['text'].strip())
         self.text = result['text'].strip()

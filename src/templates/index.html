@@ -32,6 +32,17 @@
                 </div>
             </div>
         </div>
+
+        <!-- Textbox and submit button -->
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="textInput">
+                    <button onclick="submitText()">Submit</button>
+                </div>
+            </div>
+        </div>
+
 		<script type="text/javascript">
             var socket = io();
             socket.on('connect', function() {
@@ -73,6 +84,18 @@
             }
 
             setInterval(send_joystick_data_websocket, 100);
+
+            // Handles submitting text via the textbox and submit button
+            function submitText() {
+                var textValue = document.getElementById("textInput").value;
+                fetch('/submit_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: textValue }),
+                })
+            }
 		</script>
 	</body>
 </html>

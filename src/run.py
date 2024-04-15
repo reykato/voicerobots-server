@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 import numpy as np
 import cv2
 from flask_socketio import SocketIO
@@ -75,6 +75,15 @@ def lidar_feed():
 @flask_instance.route('/audio_feed')
 def audio_feed():
     return Response(gen_audio(), mimetype='audio/wav')
+
+@flask_instance.route('/submit_text', methods=['POST'])
+def submit_text():
+    if request.method == 'POST':
+        data = request.json
+        text = data.get('text')
+        if text:
+            ash.text = text
+    return '', 200
 
 def main():
     ash.start()

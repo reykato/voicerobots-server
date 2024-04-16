@@ -10,8 +10,8 @@ from decisionmaker import DecisionMaker
 from OpenSSL import SSL
 
 context = SSL.Context(SSL.SSLv23_METHOD)
-context.use_privatekey_file('server.key')
-context.use_certificate_file('server.crt')
+context.use_privatekey_file('key.pem')
+context.use_certificate_file('cert.pem')
 
 flask_instance = Flask(__name__)
 websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server

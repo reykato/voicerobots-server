@@ -28,7 +28,7 @@ class AudioStreamHandler(ThreadedEvent):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.host, self.port))
         self.play=pyaudio.PyAudio()
-        self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True, frames_per_buffer=1024)
+        # self.stream_play=self.play.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True, frames_per_buffer=1024)
 
     def _handle_stream(self):
         while not self.stop_event.is_set():

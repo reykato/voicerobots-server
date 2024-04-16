@@ -62,12 +62,10 @@
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 const mediaRecorder = new MediaRecorder(stream)
-                mediaRecorder.start()
+                mediaRecorder.start(1000);
                 console.log(mediaRecorder.state)
-
-                
                 mediaRecorder.ondataavailable = (e) => {
-                    console.log("data available")
+                    console.log("data available");
                     chunks.push(e.data);
                   };
               })
@@ -75,8 +73,8 @@
             function send_audio_data() {
                 const blob = new Blob(chunks, { type: 'audio/webm' });
                 socket.emit('audio', blob);
-                console.log("audio sent")
-                console.log(blob)
+                console.log("audio sent");
+                console.log(blob);
                 chunks = [];
             }
 

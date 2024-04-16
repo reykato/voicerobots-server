@@ -62,6 +62,7 @@
                 const mediaRecorder = new MediaRecorder(stream)
                 mediaRecorder.start()
                 mediaRecorder.ondataavailable = (e) => {
+                    console.log("sending audio data")
                     socket.emit('audio', e.data)
                 }
               })

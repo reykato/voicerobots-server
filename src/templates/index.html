@@ -57,7 +57,7 @@
             };
             var Joy = new JoyStick('joyDiv', joyParam);
 
-            
+            let chunks = [];
 
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
@@ -65,7 +65,7 @@
                 mediaRecorder.start()
                 console.log(mediaRecorder.state)
 
-                let chunks = [];
+                
                 mediaRecorder.ondataavailable = (e) => {
                     console.log("data available")
                     chunks.push(e.data);
@@ -77,6 +77,7 @@
                 socket.emit('audio', blob);
                 console.log("audio sent")
                 console.log(blob)
+                chunks = [];
             }
 
             setInterval(send_audio_data, 2000); // Send audio data every 2s

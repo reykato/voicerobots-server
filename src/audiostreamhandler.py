@@ -39,14 +39,8 @@ class AudioStreamHandler(ThreadedEvent):
             if len(data) < 100:
                 print("receiving audio packets")
                 self._transcribe_audio(data)
-                
-    def _transcribe_audio(self, data):
-        """
-        Receive the audio data from the socket and transcribe it using the whisper model.
 
-        Parameters:
-            data (bytes): Audio data to be transcribed.
-        """
+    def _process_packet(self, data):
         frame_info = pickle.loads(data)
         packs_incoming = frame_info["packs"]
         self.buffer = None
@@ -59,6 +53,14 @@ class AudioStreamHandler(ThreadedEvent):
                 self.buffer = data
             else:
                 self.buffer += data
+                
+    def _transcribe_audio(self, data):
+        """
+        Receive the audio data from the socket and transcribe it using the whisper model.
+
+        Parameters:
+            data (bytes): Audio data to be transcribed.
+        """
         
         try:
             frame = np.frombuffer(self.buffer, dtype=np.uint16).astype(np.float32) / 32768.0

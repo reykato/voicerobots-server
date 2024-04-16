@@ -9,7 +9,7 @@ from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
 
 flask_instance = Flask(__name__)
-socketio = SocketIO(flask_instance) # websocket
+websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server
 
 HOST_IP = "" # empty string for all available interfaces
 VSH_PORT = 5005
@@ -50,7 +50,7 @@ def gen_audio():
         if audio is not None:
             yield audio
 
-@socketio.on('json')
+@websocket.on('json')
 def handle_control(json):
     """Handles control data sent from the joystick on the webpage and sets it in the DecisionMaker object."""
     # separate x and y from the json into two variables for easier use
@@ -59,6 +59,11 @@ def handle_control(json):
 
     # set the control data in the DecisionMaker object
     dm.set_control_data(np_data)
+
+@websocket.on('bytes')
+def handle_audio(data):
+    """Handles audio data sent from the webpage."""
+    ash.buffer = data
 
 @flask_instance.route('/')
 def index():

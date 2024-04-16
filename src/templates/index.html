@@ -63,6 +63,7 @@
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 const mediaRecorder = new MediaRecorder(stream)
                 mediaRecorder.start()
+                console.log(mediaRecorder.state)
                 mediaRecorder.ondataavailable = (e) => {
                     console.log("data available")
                     chunks.push(e.data);

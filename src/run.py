@@ -60,7 +60,7 @@ def handle_control(json):
     # set the control data in the DecisionMaker object
     dm.set_control_data(np_data)
 
-@websocket.on('bytes')
+@websocket.on('audio')
 def handle_audio(data):
     """Handles audio data sent from the webpage."""
     ash.buffer = data
@@ -96,7 +96,7 @@ def main():
     lsh.start()
     # cs.start()
     dm.start()
-    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False)
+    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False, ssl_context='adhoc')
 
 if __name__ == "__main__":
     try:

@@ -73,6 +73,7 @@
                 const blob = new Blob(chunks, { type: 'audio/webm' });
                 socket.emit('audio', blob);
                 console.log("audio sent")
+                console.log(blob)
             }
 
             setInterval(send_audio_data, 2000); // Send audio data every 2s

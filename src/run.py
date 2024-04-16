@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response, request
 import numpy as np
 import cv2
 from flask_socketio import SocketIO
+from engineio.payload import Payload
 from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from audiostreamhandler import AudioStreamHandler
@@ -9,6 +10,8 @@ from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
 from OpenSSL import SSL
 flask_instance = Flask(__name__)
+
+Payload.max_decode_packets = 100
 websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server
 
 HOST_IP = "" # empty string for all available interfaces

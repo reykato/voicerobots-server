@@ -63,6 +63,7 @@ def handle_control(json):
 @websocket.on('audio')
 def handle_audio(data):
     """Handles audio data sent from the webpage."""
+    print("audio received")
     ash.buffer = data
     ash.buffer_is_new = True
 

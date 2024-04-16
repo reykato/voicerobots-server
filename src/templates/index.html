@@ -57,17 +57,25 @@
             };
             var Joy = new JoyStick('joyDiv', joyParam);
 
+            let chunks = [];
+
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 const mediaRecorder = new MediaRecorder(stream)
                 mediaRecorder.start()
                 mediaRecorder.ondataavailable = (e) => {
-                    console.log("sending audio data")
-                    socket.emit('audio', e.data)
-                }
+                    console.log("data available")
+                    chunks.push(e.data);
+                  };
               })
 
-            
+            function send_audio_data() {
+                const blob = new Blob(chunks, { type: 'audio/webm' });
+                socket.emit('audio', blob);
+                console.log("audio sent")
+            }
+
+            setInterval(send_audio_data, 500); // Send audio data every 500ms
 
             function send_joystick_data() {
                 var entry = {

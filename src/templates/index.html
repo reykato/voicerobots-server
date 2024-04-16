@@ -60,6 +60,7 @@
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 const mediaRecorder = new MediaRecorder(stream)
+                mediaRecorder.start()
                 mediaRecorder.ondataavailable = (e) => {
                     socket.emit('audio', e.data)
                 }

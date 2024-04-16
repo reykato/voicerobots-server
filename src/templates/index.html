@@ -57,13 +57,15 @@
             };
             var Joy = new JoyStick('joyDiv', joyParam);
 
-            let chunks = [];
+            
 
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
                 const mediaRecorder = new MediaRecorder(stream)
                 mediaRecorder.start()
                 console.log(mediaRecorder.state)
+
+                let chunks = [];
                 mediaRecorder.ondataavailable = (e) => {
                     console.log("data available")
                     chunks.push(e.data);

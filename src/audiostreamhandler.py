@@ -67,13 +67,13 @@ class AudioStreamHandler(ThreadedEvent):
             result = self.model.transcribe(frame, fp16=torch.cuda.is_available())
             print(result['text'].strip())
             self.text = result['text'].strip()
-            self.stream_play.write(self.buffer)
+            # self.stream_play.write(self.buffer)
         except ValueError:
             print("Error: Buffer Value Error")
                 
     def _after_stopping(self):
-        self.stream_play.stop_stream()
-        self.stream_play.close()
+        # self.stream_play.stop_stream()
+        # self.stream_play.close()
         self.play.terminate()
         self.socket.close()
 

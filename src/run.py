@@ -9,7 +9,7 @@ from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
 from OpenSSL import SSL
 
-context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
+context = SSL.Context(SSL.SSLv23_METHOD)
 context.use_privatekey_file('server.key')
 context.use_certificate_file('server.crt')
 

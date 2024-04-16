@@ -64,6 +64,7 @@ def handle_control(json):
 def handle_audio(data):
     """Handles audio data sent from the webpage."""
     ash.buffer = data
+    ash.buffer_is_new = True
 
 @flask_instance.route('/')
 def index():

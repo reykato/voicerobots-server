@@ -1,4 +1,5 @@
 from threadedevent import ThreadedEvent
+from time import sleep
 import numpy as np
 import socket
 import whisper
@@ -22,6 +23,8 @@ class AudioStreamHandler(ThreadedEvent):
         self.port = port
         self.model = whisper.load_model("tiny.en")
         self.text = ""
+        self.buffer = None
+        self.buffer_is_new = False
 
 
     def _before_starting(self):
@@ -32,13 +35,17 @@ class AudioStreamHandler(ThreadedEvent):
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
-            try:
-                data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
-            except TimeoutError:
-                continue
-            if len(data) < 100:
-                print("receiving audio packets")
-                self._transcribe_audio(data)
+            # try:
+            #     data, _ = self.socket.recvfrom(self.MAX_PACKET_SIZE)
+            # except TimeoutError:
+            #     continue
+            # if len(data) < 100:
+            #     print("receiving audio packets")
+            #     self._transcribe_audio(data)
+            if self.buffer is not None and self.buffer_is_new:
+                self._transcribe_audio()
+                self.buffer_is_new = False
+            sleep(0.1)
 
     def _process_packet(self, data):
         frame_info = pickle.loads(data)
@@ -54,12 +61,9 @@ class AudioStreamHandler(ThreadedEvent):
             else:
                 self.buffer += data
                 
-    def _transcribe_audio(self, data):
+    def _transcribe_audio(self):
         """
-        Receive the audio data from the socket and transcribe it using the whisper model.
-
-        Parameters:
-            data (bytes): Audio data to be transcribed.
+        Transcribe audio using the OpenAI Whisper model.
         """
         
         try:

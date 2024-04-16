@@ -8,11 +8,6 @@ from audiostreamhandler import AudioStreamHandler
 from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
 from OpenSSL import SSL
-
-context = SSL.Context(SSL.SSLv23_METHOD)
-context.use_privatekey_file('key.pem')
-context.use_certificate_file('cert.pem')
-
 flask_instance = Flask(__name__)
 websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server
 
@@ -101,7 +96,7 @@ def main():
     lsh.start()
     # cs.start()
     dm.start()
-    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False, ssl_context=context)
+    flask_instance.run(host="0.0.0.0", port=80, use_reloader=False, ssl_context=("cert.pem", "key.pem"))
 
 if __name__ == "__main__":
     try:

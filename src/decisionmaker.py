@@ -18,8 +18,8 @@ class DecisionMaker(ThreadedEvent):
     """
     
     # angle range for the lidar scan to consider as the front of the robot (in degrees)
-    LIDAR_START_ANGLE = 0
-    LIDAR_END_ANGLE   = 60
+    LIDAR_START_ANGLE = 330
+    LIDAR_END_ANGLE   = 30
 
     # distance of closest object for which the lidar should stop the robot (in mm)
     LIDAR_DISTANCE_THRESHOLD = 300

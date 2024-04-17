@@ -1,3 +1,6 @@
 __pycache__
 .venv/
 .pylintrc
+
+cert.pem
+key.pem

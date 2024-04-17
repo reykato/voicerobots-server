@@ -61,7 +61,7 @@
 
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                const mediaRecorder = new MediaRecorder(stream)
+                const mediaRecorder = new MediaRecorder(stream, { mimeType:"audio/webm; codecs=pcm" })
                 mediaRecorder.start(1000);
                 console.log(mediaRecorder.state)
                 mediaRecorder.ondataavailable = (e) => {
@@ -78,7 +78,7 @@
                 chunks = [];
             }
 
-            setInterval(send_audio_data, 2000); // Send audio data every 2s
+            setInterval(send_audio_data, 5000); // Send audio data every 5s
 
             function send_joystick_data() {
                 var entry = {

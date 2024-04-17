@@ -135,8 +135,8 @@ class DecisionMaker(ThreadedEvent):
             # print(f"Making lidar decision...")
 
             # only consider points within the front of the robot
-            lidar_scan_narrow = [x for x in lidar_scan if x[1]
-                                  >= self.LIDAR_START_ANGLE and x[1] <= self.LIDAR_END_ANGLE]
+            lidar_scan_narrow = [x for x in lidar_scan if (x[1]
+                                  >= self.LIDAR_START_ANGLE and x[1] < 360) or x[1] <= self.LIDAR_END_ANGLE]
             
             # check if any point is too close to the robot
             for point in lidar_scan_narrow:

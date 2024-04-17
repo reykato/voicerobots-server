@@ -72,9 +72,6 @@
               })
 
             function send_audio_data() {
-                if chunks.length == 0 {
-                    return;
-                }
                 const blob = new Blob(chunks, { type: 'audio/wav' });
                 socket.emit('audio', blob);
                 console.log("audio sent");

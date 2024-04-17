@@ -72,6 +72,9 @@
               })
 
             function send_audio_data() {
+                if chunks.length == 0 {
+                    return;
+                }
                 const blob = new Blob(chunks, { type: 'audio/webm' });
                 socket.emit('audio', blob);
                 console.log("audio sent");
@@ -79,7 +82,7 @@
                 chunks = [];
             }
 
-            setInterval(send_audio_data, 5000); // Send audio data every 5s
+            setInterval(send_audio_data, 1000); // Send audio data every 5s
 
             function send_joystick_data() {
                 var entry = {

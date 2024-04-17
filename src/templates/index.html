@@ -62,7 +62,7 @@
 
             // Get audio stream from user microphone
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                const mediaRecorder = new MediaRecorder(stream, { mimeType:"audio/webm; codecs=pcm" })
+                const mediaRecorder = new MediaRecorder(stream, { mimeType:"audio/wav; codecs=pcm" })
                 mediaRecorder.start(1000);
                 console.log(mediaRecorder.state)
                 mediaRecorder.ondataavailable = (e) => {
@@ -75,7 +75,7 @@
                 if chunks.length == 0 {
                     return;
                 }
-                const blob = new Blob(chunks, { type: 'audio/webm' });
+                const blob = new Blob(chunks, { type: 'audio/wav' });
                 socket.emit('audio', blob);
                 console.log("audio sent");
                 console.log(blob);

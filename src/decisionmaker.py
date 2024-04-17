@@ -18,11 +18,11 @@ class DecisionMaker(ThreadedEvent):
     """
     
     # angle range for the lidar scan to consider as the front of the robot (in degrees)
-    LIDAR_START_ANGLE = 60
-    LIDAR_END_ANGLE   = 120
+    LIDAR_START_ANGLE = 0
+    LIDAR_END_ANGLE   = 60
 
-    # distance of closest object for which the lidar should stop the robot (in cm)
-    LIDAR_DISTANCE_THRESHOLD = 100
+    # distance of closest object for which the lidar should stop the robot (in mm)
+    LIDAR_DISTANCE_THRESHOLD = 300
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()

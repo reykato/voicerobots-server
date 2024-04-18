@@ -265,7 +265,7 @@ class DecisionMaker(ThreadedEvent):
         Parameters:
             control_data: Tuple (x, y) containing the x and y joystick values.
         """
-        if not ((self.prev_control_data == [0.0, 0.0]).all() and (control_data == [0.0, 0.0]).all()):
+        if not (self.prev_control_data == [0.0, 0.0] and control_data[0] == [0.0 and control_data[1] == 0.0]):
             self.control_data = control_data
             self.control_data_override = True
         self.prev_control_data = control_data

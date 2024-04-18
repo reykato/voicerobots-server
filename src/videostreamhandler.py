@@ -121,7 +121,7 @@ class VideoStreamHandler(ThreadedEvent):
             cv2.drawContours(image, max_contour, -1, (0,255,0), 3)
 
             if (cv2.contourArea(max_contour) >= self.LOW_CONTOUR_AREA_THRESHOLD) and (cv2.contourArea(max_contour) <= self.HIGH_CONTOUR_AREA_THRESHOLD):
-                print(f"Max size contour area: {cv2.contourArea(max_contour)}")
+                # print(f"Max size contour area: {cv2.contourArea(max_contour)}")
 
                 # store the center point
                 self.center = [cX, cY]

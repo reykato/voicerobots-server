@@ -91,14 +91,17 @@ def submit_text():
         text = data.get('text')
         if text:
             print(f"Text received: {text}")
+            dm.stopflag = False if text != "stop" else True
+            
             if text[0:6] == "search":
                 print(f"Setting search color to: {text[7:]}")
                 vsh.set_lower_upper(text[7:])
                 dm.mode = "search"
                 ash.manual_text = "search"
             else:
-                dm.stopflag = False if text != "stop" else True
                 dm.mode = text
+            
+            
     return '', 200
 
 def main():

@@ -15,6 +15,8 @@ class VideoStreamHandler(ThreadedEvent):
     """
 
     MAX_PACKET_SIZE = 65540
+    LOW_CONTOUR_AREA_THRESHOLD = 500 # target is too far to be considered, send [0, 0] as center
+    HIGH_CONTOUR_AREA_THRESHOLD = 50000 # target is too close, send [0, 0] as center
 
     def __init__(self, host: str, port: int):
         super().__init__()
@@ -104,9 +106,6 @@ class VideoStreamHandler(ThreadedEvent):
             # get the max size contour based on its area
             max_contour = max(contours, key=cv2.contourArea)
 
-            # draw the contour on the image
-            cv2.drawContours(image, max_contour, -1, (0,255,0), 3)
-
             # get the center of the contour
             M = cv2.moments(max_contour)
             if M["m00"] != 0: # prevent division by zero
@@ -118,13 +117,26 @@ class VideoStreamHandler(ThreadedEvent):
                 cX = 0
                 cY = 0
 
-            print(f"Contour area: {cv2.contourArea(max_contour)}")           
+            # draw the contour on the image
+            cv2.drawContours(image, max_contour, -1, (0,255,0), 3)
 
-            # store the center point
-            self.center = [cX, cY]
-            
-            # draw a white dot at the coordinates of the center
-            cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
+            if (cv2.contourArea(max_contour) >= self.LOW_CONTOUR_AREA_THRESHOLD) and (cv2.contourArea(max_contour) <= self.HIGH_CONTOUR_AREA_THRESHOLD):
+                print(f"Max size contour area: {cv2.contourArea(max_contour)}")
+
+                # store the center point
+                self.center = [cX, cY]
+                
+                # draw a white dot at the coordinates of the center
+                cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
+            else:
+                # target is too close/far, set center to [0, 0]
+                self.center = [0, 0]
+
+                # draw a red dot at the coordinates of the center since target is too close/far
+                cv2.circle(image, (cX, cY), 5, (255, 0, 0), -1)
+
+        else:
+            self.center = [0, 0]
         
         encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 80]
         _, processed_buffer = cv2.imencode('.jpg', image, encode_param)

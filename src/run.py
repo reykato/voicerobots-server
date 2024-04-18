@@ -8,7 +8,6 @@ from controlstream import ControlStream
 from audiostreamhandler import AudioStreamHandler
 from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
-from OpenSSL import SSL
 flask_instance = Flask(__name__)
 
 Payload.max_decode_packets = 100
@@ -26,8 +25,6 @@ ash = AudioStreamHandler(HOST_IP, AUS_PORT)
 lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 
 dm = DecisionMaker(vsh, lsh, cs, ash)
-
-prev_control_data = [0.0, 0.0]
 
 def gen_video_frame():
     """Gets frames from the VideoStreamHandler object and yields them as a byte stream for display on the webpage."""
@@ -62,9 +59,7 @@ def handle_control(json):
     np_data = np.array(data, dtype=np.float32)
 
     # set the control data in the DecisionMaker object
-    if not (prev_control_data == [0.0, 0.0] and data == [0.0, 0.0]):
-        prev_control_data = data
-        dm.set_control_data(np_data)
+    dm.set_control_data(np_data)
 
 @websocket.on('audio')
 def handle_audio(data):

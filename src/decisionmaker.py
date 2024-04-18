@@ -56,6 +56,8 @@ class DecisionMaker(ThreadedEvent):
 
         self.move_start_time = time()
         self.move_started = False
+
+        self.prev_control_data = [0.0, 0.0]
         
 
     def _handle_stream(self):
@@ -263,6 +265,7 @@ class DecisionMaker(ThreadedEvent):
         Parameters:
             control_data: Tuple (x, y) containing the x and y joystick values.
         """
-        
-        self.control_data = control_data
-        self.control_data_override = True
+        if not (self.prev_control_data == [0.0, 0.0] and control_data == [0.0, 0.0]):
+            self.control_data = control_data
+            self.control_data_override = True
+        self.prev_control_data = control_data

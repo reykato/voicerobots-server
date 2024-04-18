@@ -117,7 +117,7 @@ class DecisionMaker(ThreadedEvent):
                                     self.control_data = video_decision
 
                 # send the control data to the ControlStream object
-                self._send_control()
+            self._send_control()
             sleep(0.1)
 
     def _search_for_target(self):

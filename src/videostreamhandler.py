@@ -129,8 +129,12 @@ class VideoStreamHandler(ThreadedEvent):
                 # draw a white dot at the coordinates of the center
                 cv2.circle(image, (cX, cY), 5, (255, 255, 255), -1)
             else:
-                # target is too close/far, set center to [0, 0]
+                # target is too far, don't consider it
                 self.center = [0, 0]
+
+                # target is too close, set the center to an escape value to let DecisionMaker know
+                if (cv2.contourArea(max_contour) > self.HIGH_CONTOUR_AREA_THRESHOLD):
+                    self.center = [-1, -1]
 
                 # draw a red dot at the coordinates of the center since target is too close/far
                 cv2.circle(image, (cX, cY), 5, (0, 0, 255), -1)

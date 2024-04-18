@@ -102,6 +102,13 @@ class DecisionMaker(ThreadedEvent):
                     elif self.mode == "track":
                         print("track mode...")
                         video_decision = self._make_video_decision(self.target_center)
+
+                        if video_decision[0] == -1: # if the target is too close
+                            self.control_data = [0.0, 0.0]
+                            self.stopflag = True
+                            self.mode = "search"
+                            self.search_started = False
+
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]
                         else:
@@ -138,6 +145,12 @@ class DecisionMaker(ThreadedEvent):
 
         if time() - self.search_start_time < self.SEARCH_TIME: # if the search time has not elapsed, keep searching
             video_decision = self._make_video_decision(self.target_center)
+            if video_decision[0] == -1: # if the target is too close, stop robot
+                self.control_data = [0.0, 0.0]
+                self.stopflag = True
+                self.mode = "search"
+                self.search_started = False
+                return False
             if video_decision == [0.0, 0.0]: # if no target is found
                 print(f"Searching for target...")
                 self.control_data = [0.5, 0.0]
@@ -182,6 +195,8 @@ class DecisionMaker(ThreadedEvent):
 
         if target_center[0] == 0 and target_center[1] == 0: # if no target is found
             return [0.0, 0.0]
+        elif target_center[0] == -1: # target is too close, pass through escape value
+            return [-1, -1]
         else:
             # if the target is to the right of the center, move right (divide by 960 not 480 max output of 0.5)
             if target_center[0] > 560:

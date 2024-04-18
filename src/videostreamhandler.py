@@ -30,7 +30,7 @@ class VideoStreamHandler(ThreadedEvent):
         self.frame = None
         self.frame_is_new = False
         self.center = (0, 0)
-        self.lower = np.array([40, 30, 30])
+        self.lower = np.array([40, 50, 50])
         self.upper = np.array([90, 255, 255])
 
     def _handle_stream(self):

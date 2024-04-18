@@ -171,6 +171,7 @@ class DecisionMaker(ThreadedEvent):
             seconds (int): Number of seconds to move the robot.
         """
         if not self.move_started:
+            print("Starting move...")
             self.move_start_time = time()
             self.move_started = True
 
@@ -180,6 +181,7 @@ class DecisionMaker(ThreadedEvent):
         else: # if the move time has elapsed, go back into search mode
             self.mode = "search"
             self.search_started = False
+            self.move_started = False
 
 
     def _make_video_decision(self, target_center:list) -> list:

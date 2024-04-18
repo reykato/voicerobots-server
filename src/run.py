@@ -27,6 +27,8 @@ lsh = LidarStreamHandler(HOST_IP, LSH_PORT)
 
 dm = DecisionMaker(vsh, lsh, cs, ash)
 
+prev_control_data = [0.0, 0.0]
+
 def gen_video_frame():
     """Gets frames from the VideoStreamHandler object and yields them as a byte stream for display on the webpage."""
     while True:
@@ -51,8 +53,6 @@ def gen_audio():
         audio = ash.get_raw_audio()
         if audio is not None:
             yield audio
-
-prev_control_data = [0.0, 0.0]
 
 @websocket.on('json')
 def handle_control(json):

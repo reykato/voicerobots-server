@@ -92,8 +92,8 @@ class DecisionMaker(ThreadedEvent):
                         self._move_forward_seconds(3)
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
-                            self.mode = "search"
                             self.control_data = [0.0, 0.0]
+                        # self.mode = "search"
 
                     elif self.mode == "voice":
                         self.control_data = self._scan_audio_direction(self.ash.get_transcription())

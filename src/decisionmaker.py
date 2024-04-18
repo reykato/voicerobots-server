@@ -138,6 +138,7 @@ class DecisionMaker(ThreadedEvent):
         """
 
         if not self.search_started:
+            print("Starting search...")
             self.search_start_time = time()
             self.search_started = True
 
@@ -151,6 +152,7 @@ class DecisionMaker(ThreadedEvent):
                 self.mode = "track"
                 return False
         else: # if the search time has elapsed
+            print("Search timed out, moving forward...")
             return True
         
     def _move_forward_seconds(self, seconds:int):

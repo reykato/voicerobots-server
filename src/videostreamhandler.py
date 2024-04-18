@@ -133,7 +133,7 @@ class VideoStreamHandler(ThreadedEvent):
                 self.center = [0, 0]
 
                 # draw a red dot at the coordinates of the center since target is too close/far
-                cv2.circle(image, (cX, cY), 5, (255, 0, 0), -1)
+                cv2.circle(image, (cX, cY), 5, (0, 0, 255), -1)
 
         else:
             self.center = [0, 0]

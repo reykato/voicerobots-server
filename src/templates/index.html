@@ -21,7 +21,7 @@
 		<div class="container">
             <div class="row">
                 <div class="col offset-lg-2">
-                    <img class="rounded" src="{{ url_for('video_feed') }}">
+                    <img class="rounded img-fluid" src="{{ url_for('video_feed') }}">
                 </div>
                 <div class="col">
                     <h1>Joystick Control</h1>
@@ -31,13 +31,10 @@
             </div>
             <div class="col">
                 <div class="row">
-                    <img class="rounded img-fluid" src="{{ url_for('lidar_feed') }}">
-                </div>
-                <div class="row">
                     <div class="form-group row">
                         <label for="exampleInputEmail1">Command</label>
-                        <input type="text" class="form-control-plaintext" id="textInput">
-                        <button type="submit" class="btn btn-primary" onclick="submitText()">Send Command</button>
+                        <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
+                        <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
                     </div>
                 </div>
             </div>

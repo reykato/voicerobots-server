@@ -113,7 +113,7 @@ class DecisionMaker(ThreadedEvent):
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "track":
-                            
+                        print("track mode...")
                         video_decision = self._make_video_decision(self.target_center)
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]
@@ -125,6 +125,8 @@ class DecisionMaker(ThreadedEvent):
                                 self.control_data = video_decision
 
                 # send the control data to the ControlStream object
+                else: # if the stop flag is set, stop the robot
+                    self.control_data = [0.0, 0.0]
             self._send_control()
             sleep(0.1)
 

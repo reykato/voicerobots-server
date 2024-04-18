@@ -110,7 +110,8 @@ class DecisionMaker(ThreadedEvent):
                             self.search_started = False
                             stop_robot = True
                         
-                        if stop_robot: # if the robot is too close to an object, stop the robot
+                        if stop_robot: # if the robot is too close to an object, stop the robot and move
+                            self.mode = "search_move"
                             self.control_data = [0.0, 0.0]
                         else:
                             if video_decision == [0.0, 0.0]: # if no target is found

@@ -52,6 +52,8 @@ def gen_audio():
         if audio is not None:
             yield audio
 
+prev_control_data = [0.0, 0.0]
+
 @websocket.on('json')
 def handle_control(json):
     """Handles control data sent from the joystick on the webpage and sets it in the DecisionMaker object."""
@@ -60,7 +62,9 @@ def handle_control(json):
     np_data = np.array(data, dtype=np.float32)
 
     # set the control data in the DecisionMaker object
-    dm.set_control_data(np_data)
+    if not (prev_control_data == [0.0, 0.0] and data == [0.0, 0.0]):
+        prev_control_data = data
+        dm.set_control_data(np_data)
 
 @websocket.on('audio')
 def handle_audio(data):

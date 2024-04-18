@@ -154,7 +154,6 @@ class DecisionMaker(ThreadedEvent):
                 self.search_started = False
                 return False
             if video_decision == [0.0, 0.0]: # if no target is found
-                print(f"Searching for target...")
                 self.control_data = [0.5, 0.0]
                 return False
             else: # if the target is found, go into tracking mode

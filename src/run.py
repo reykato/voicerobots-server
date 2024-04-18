@@ -92,11 +92,12 @@ def submit_text():
         if text:
             print(f"Text received: {text}")
             dm.stopflag = False if text != "stop" else True
-            
+
             if text[0:6] == "search":
                 print(f"Setting search color to: {text[7:]}")
                 vsh.set_lower_upper(text[7:])
                 dm.mode = "search"
+                dm.control_data_override = False
                 ash.manual_text = "search"
             else:
                 dm.mode = text

@@ -1,21 +1,21 @@
-*
+/* *
 {
 	box-sizing: border-box;
-}
+} */
 
-body
+/* body
 {
 	margin: 0px;
 	padding: 0px;
 	font-family: monospace;
   background-color: black;
-}
+} */
 
-.row
+/* .row
 {
 	display: inline-flex;
 	clear: both;
-}
+} */
 
 .columnLateral
 {

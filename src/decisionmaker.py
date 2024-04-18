@@ -89,7 +89,7 @@ class DecisionMaker(ThreadedEvent):
 
                     elif self.mode == "search_move":
                         print("Search move mode...")
-                        self._move_forward_seconds(2)
+                        self._move_forward_seconds(3)
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
                             self.mode = "search"

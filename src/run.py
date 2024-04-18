@@ -90,9 +90,10 @@ def submit_text():
         data = request.json
         text = data.get('text')
         if text:
-            print("Text received: ", text)
+            print(f"Text received: {text}")
             ash.manual_text = text
             dm.mode = text
+            dm.stopflag = False if text != "stop" else True
     return '', 200
 
 def main():

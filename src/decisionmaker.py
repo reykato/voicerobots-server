@@ -258,14 +258,14 @@ class DecisionMaker(ThreadedEvent):
             self.cs.send_control(nparr)
 
 
-    def set_control_data(self, control_data):
+    def set_control_data(self, control_data:list):
         """
         Sets the control data attribute.
 
         Parameters:
             control_data: Tuple (x, y) containing the x and y joystick values.
         """
-        if not (self.prev_control_data == [0.0, 0.0] and control_data == [0.0, 0.0]):
+        if not ((self.prev_control_data == [0.0, 0.0]).all() and (control_data == [0.0, 0.0]).all()):
             self.control_data = control_data
             self.control_data_override = True
         self.prev_control_data = control_data

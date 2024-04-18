@@ -71,6 +71,8 @@ class DecisionMaker(ThreadedEvent):
                 # self._make_audio_decision(self.ash.get_transcription())
                 self.mode = self.ash.get_transcription()
                 print(f"Mode set: {self.mode}")
+                if self.mode != '':
+                    self.stopflag = False
 
                 if not self.stopflag:
 

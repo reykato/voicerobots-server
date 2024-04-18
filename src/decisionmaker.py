@@ -61,9 +61,6 @@ class DecisionMaker(ThreadedEvent):
         
 
     def _handle_stream(self):
-        """
-        Updates the target_center, lidar_scan, and control_data attributes with the most recent data.
-        """
         while not self.stop_event.is_set():
             if not self.control_data_override:
                 # self._make_audio_decision(self.ash.get_transcription())
@@ -83,16 +80,6 @@ class DecisionMaker(ThreadedEvent):
 
                     if self.mode == "search":
                         print("Search mode...")
-                        # if (self.control_data == [0.0, 0.0]):
-                        #     self.giveupthreshhold += 1
-                        #     if self.giveupthreshhold < 100:
-                        #         self.control_data = [0.5, 0.0]
-                        #     else:
-                        #         self.control_data = [0.0, 0.1]
-                        # else:
-                        #     self.giveupthreshhold = 0
-                        # if stop_robot:                  
-                        #     self.control_data = [0.0, -0.1]
 
                         search_timed_out = self._search_for_target()
                         if search_timed_out:
@@ -124,10 +111,13 @@ class DecisionMaker(ThreadedEvent):
                             else:
                                 self.control_data = video_decision
 
-                # send the control data to the ControlStream object
                 else: # if the stop flag is set, stop the robot
                     self.control_data = [0.0, 0.0]
+            
+            # send the control data to the robot using the control stream
             self._send_control()
+
+            # limit the rate of the decision loop to 10 Hz
             sleep(0.1)
 
     def _search_for_target(self):

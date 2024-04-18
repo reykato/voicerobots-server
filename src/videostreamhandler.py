@@ -116,7 +116,9 @@ class VideoStreamHandler(ThreadedEvent):
                 cY = int(M["m01"] / M["m00"])
             else:
                 cX = 0
-                cY = 0                            
+                cY = 0
+
+            print(f"Contour area: {cv2.contourArea(M)}")           
 
             # store the center point
             self.center = [cX, cY]

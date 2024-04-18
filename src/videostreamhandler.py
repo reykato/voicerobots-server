@@ -174,7 +174,7 @@ class VideoStreamHandler(ThreadedEvent):
         if color == 'red':
             # self.lower = np.array([0, 120, 70])
             # self.upper = np.array([10, 255, 255])
-            self.lower = np.array([359, 150, 80])
+            self.lower = np.array([359, 50, 50])
             self.upper = np.array([20, 255, 255])
         elif color == 'blue':
             self.lower = np.array([110, 50, 50])

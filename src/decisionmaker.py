@@ -108,6 +108,8 @@ class DecisionMaker(ThreadedEvent):
                             self.stopflag = True
                             self.mode = "search"
                             self.search_started = False
+                            stop_robot = True
+                        
 
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]

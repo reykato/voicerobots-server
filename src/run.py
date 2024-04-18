@@ -14,9 +14,9 @@ flask_instance = Flask(__name__)
 Payload.max_decode_packets = 100
 websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server
 
-HOST_IP = "" # empty string for all available interfaces
+HOST_IP  = "" # empty string for all available interfaces
 VSH_PORT = 5005
-CS_PORT = 5006
+CS_PORT  = 5006
 AUS_PORT = 5007
 LSH_PORT = 5008
 

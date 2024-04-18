@@ -23,6 +23,7 @@ class AudioStreamHandler(ThreadedEvent):
         self.port = port
         self.model = whisper.load_model("tiny.en")
         self.text = ""
+        self.manual_text = ""
         self.buffer = None
         self.buffer_is_new = False
 
@@ -83,6 +84,9 @@ class AudioStreamHandler(ThreadedEvent):
 
     def get_transcription(self):
         return self.text
+    
+    def get_manual_mode(self):
+        return self.manual_text
 
     def get_raw_audio(self):
         return self.buffer    

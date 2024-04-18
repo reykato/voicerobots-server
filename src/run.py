@@ -91,7 +91,8 @@ def submit_text():
         text = data.get('text')
         if text:
             print("Text received: ", text)
-            ash.text = text
+            ash.manual_text = text
+            dm.mode = text
     return '', 200
 
 def main():

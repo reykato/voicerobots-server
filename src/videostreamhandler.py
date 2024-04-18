@@ -176,6 +176,15 @@ class VideoStreamHandler(ThreadedEvent):
             # self.upper = np.array([10, 255, 255])
             self.lower = np.array([359, 150, 80])
             self.upper = np.array([20, 255, 255])
+        elif color == 'blue':
+            self.lower = np.array([110, 50, 50])
+            self.upper = np.array([130, 255, 255])
         elif color == 'green':
             self.lower = np.array([40, 30, 30])
             self.upper = np.array([90, 255, 255])
+        else:
+            # raise ValueError("Invalid color. Available options are 'red', 'green', and 'blue'.")
+            self.lower = np.array([255, 255, 255])
+            self.upper = np.array([255, 255, 255])
+            print("Invalid color. Available options are 'red', 'green', and 'blue'")
+        

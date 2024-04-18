@@ -54,7 +54,6 @@ class VideoStreamHandler(ThreadedEvent):
             frame_info (dict): Information about the frame to be received.
         """
         if frame_info is not None:
-            print("receiving video packets")
             # Get the number of packets to be received
             packs_incoming = frame_info["packs"]
 

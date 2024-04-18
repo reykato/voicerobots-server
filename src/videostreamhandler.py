@@ -172,7 +172,7 @@ class VideoStreamHandler(ThreadedEvent):
             color (str): The color to be detected. Ex: 'red', 'green'.
         """
         if color == 'red':
-            self.lower = np.array([0, 50, 50])
+            self.lower = np.array([5, 50, 50])
             self.upper = np.array([15, 255, 255])
         elif color == 'blue':
             self.lower = np.array([110, 80, 80])

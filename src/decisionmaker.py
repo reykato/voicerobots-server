@@ -65,13 +65,12 @@ class DecisionMaker(ThreadedEvent):
         Updates the target_center, lidar_scan, and control_data attributes with the most recent data.
         """
         while not self.stop_event.is_set():
-
             if not self.control_data_override:
-
                 # self._make_audio_decision(self.ash.get_transcription())
                 self.mode = self.ash.get_transcription()
                 print(f"Mode set: {self.mode}")
-                if self.mode != '':
+                if self.mode != "":
+                    print("Stop flag set to false")
                     self.stopflag = False
 
                 if not self.stopflag:
@@ -83,6 +82,7 @@ class DecisionMaker(ThreadedEvent):
                     stop_robot = self._make_lidar_decision(self.lidar_scan)
 
                     if self.mode == "search":
+                        print("Search mode...")
                         # if (self.control_data == [0.0, 0.0]):
                         #     self.giveupthreshhold += 1
                         #     if self.giveupthreshhold < 100:
@@ -101,6 +101,7 @@ class DecisionMaker(ThreadedEvent):
                             self.mode = "search_move"
 
                     elif self.mode == "search_move":
+                        print("Search move mode...")
                         self._move_forward_seconds(2)
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
@@ -108,19 +109,20 @@ class DecisionMaker(ThreadedEvent):
                             self.control_data = [0.0, 0.0]
 
                     elif self.mode == "voice":
-                            self.control_data = self._scan_audio_direction(self.ash.get_transcription())
-                            if stop_robot: # if the robot is too close to an object, stop the robot
-                                self.control_data = [0.0, 0.0]
+                        self.control_data = self._scan_audio_direction(self.ash.get_transcription())
+                        if stop_robot: # if the robot is too close to an object, stop the robot
+                            self.control_data = [0.0, 0.0]
                     elif self.mode == "track":
-                            video_decision = self._make_video_decision(self.target_center)
-                            if stop_robot: # if the robot is too close to an object, stop the robot
+                            
+                        video_decision = self._make_video_decision(self.target_center)
+                        if stop_robot: # if the robot is too close to an object, stop the robot
+                            self.control_data = [0.0, 0.0]
+                        else:
+                            if video_decision == [0.0, 0.0]: # if no target is found
+                                self.mode = "search"
                                 self.control_data = [0.0, 0.0]
                             else:
-                                if video_decision == [0.0, 0.0]: # if no target is found
-                                    self.mode = "search"
-                                    self.control_data = [0.0, 0.0]
-                                else:
-                                    self.control_data = video_decision
+                                self.control_data = video_decision
 
                 # send the control data to the ControlStream object
             self._send_control()

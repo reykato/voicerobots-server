@@ -25,7 +25,7 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 250
 
     # time to search for a target before moving (in seconds)
-    SEARCH_TIME = 11.5
+    SEARCH_TIME = 10
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
@@ -177,7 +177,7 @@ class DecisionMaker(ThreadedEvent):
 
         if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
             print(f"Moving forward...")
-            self.control_data = [0.0, 0.6]
+            self.control_data = [0.0, 0.8]
         else: # if the move time has elapsed, go back into search mode
             self.mode = "search"
             self.search_started = False

@@ -10,7 +10,7 @@ from lidarstreamhandler import LidarStreamHandler
 from decisionmaker import DecisionMaker
 flask_instance = Flask(__name__)
 
-Payload.max_decode_packets = 100
+Payload.max_decode_packets = 200
 websocket = SocketIO(flask_instance) # websocket for communication between the webpage and the server
 
 HOST_IP  = "" # empty string for all available interfaces

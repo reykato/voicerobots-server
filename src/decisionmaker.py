@@ -68,7 +68,9 @@ class DecisionMaker(ThreadedEvent):
 
             if not self.control_data_override:
 
-                self._make_audio_decision(self.ash.get_transcription())
+                # self._make_audio_decision(self.ash.get_transcription())
+                self.mode = self.ash.get_transcription()
+                print(f"Mode set: {self.mode}")
 
                 if not self.stopflag:
 

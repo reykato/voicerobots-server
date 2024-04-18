@@ -30,6 +30,7 @@ dm = DecisionMaker(vsh, lsh, cs, ash)
 def gen_video_frame():
     """Gets frames from the VideoStreamHandler object and yields them as a byte stream for display on the webpage."""
     while True:
+        print("gen_video_frame called")
         frame = vsh.get_frame()
         if frame is not None and type(frame) == np.ndarray:
             #print("frame get")
@@ -92,6 +93,7 @@ def submit_text():
         data = request.json
         text = data.get('text')
         if text:
+            print("Text received: ", text)
             ash.text = text
     return '', 200
 

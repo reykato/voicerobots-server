@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 import numpy as np
 from threadedevent import ThreadedEvent
 from videostreamhandler import VideoStreamHandler
@@ -22,7 +22,10 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_END_ANGLE   = 30
 
     # distance of closest object for which the lidar should stop the robot (in mm)
-    LIDAR_DISTANCE_THRESHOLD = 300
+    LIDAR_DISTANCE_THRESHOLD = 250
+
+    # time to search for a target before moving (in seconds)
+    SEARCH_TIME = 8
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
@@ -33,7 +36,8 @@ class DecisionMaker(ThreadedEvent):
 
         # holds current robot operating mode
         self.mode:str = 'search'
-        self.stopflag:bool = False
+        
+        self.stopflag:bool = True
 
         # hold the most recent frame from video, control tuple from joystick, and lidar scan
         self.target_center = None
@@ -46,6 +50,13 @@ class DecisionMaker(ThreadedEvent):
         self.control_data_override = False
 
         self.giveupthreshhold = 0
+
+        self.search_start_time = time()
+        self.search_started = False
+
+        self.move_start_time = time()
+        self.move_started = False
+        
 
     def _handle_stream(self):
         """
@@ -66,31 +77,93 @@ class DecisionMaker(ThreadedEvent):
                     stop_robot = self._make_lidar_decision(self.lidar_scan)
 
                     if self.mode == "search":
-                            self.control_data = self._make_video_decision(self.target_center)
-                            if (self.control_data == [0.0, 0.0]):
-                                self.giveupthreshhold += 1
-                                if self.giveupthreshhold < 100:
-                                    self.control_data = [0.5, 0.0]
-                                else:
-                                    self.control_data = [0.0, 0.1]
-                            else:
-                                self.giveupthreshhold = 0
-                            if stop_robot:                  
-                                self.control_data = [0.0, -0.1]
+                        # if (self.control_data == [0.0, 0.0]):
+                        #     self.giveupthreshhold += 1
+                        #     if self.giveupthreshhold < 100:
+                        #         self.control_data = [0.5, 0.0]
+                        #     else:
+                        #         self.control_data = [0.0, 0.1]
+                        # else:
+                        #     self.giveupthreshhold = 0
+                        # if stop_robot:                  
+                        #     self.control_data = [0.0, -0.1]
+
+                        search_timed_out = self._search_for_target()
+                        if search_timed_out:
+                            # if no contour found during search, move the robot in a direction for x seconds
+                            # assuming robot turned 450 degrees and is ready to move
+                            self.mode = "search_move"
+
+                    elif self.mode == "search_move":
+                        self._move_forward_seconds(2)
+                        if stop_robot:
+                            # if the robot is too close to an object while moving, stop the robot and search immediately
+                            self.mode = "search"
+                            self.control_data = [0.0, 0.0]
+
                     elif self.mode == "voice":
                             self.control_data = self._scan_audio_direction(self.ash.get_transcription())
-                            if stop_robot:                  # if the robot is too close to an object, stop the robot
+                            if stop_robot: # if the robot is too close to an object, stop the robot
                                 self.control_data = [0.0, 0.0]
                     elif self.mode == "track":
-                            self.control_data = self._make_video_decision(self.target_center)
+                            video_decision = self._make_video_decision(self.target_center)
+                            if stop_robot: # if the robot is too close to an object, stop the robot
+                                self.control_data = [0.0, 0.0]
+                            else:
+                                if video_decision == [0.0, 0.0]: # if no target is found
+                                    self.mode = "search"
+                                    self.control_data = [0.0, 0.0]
+                                else:
+                                    self.control_data = video_decision
 
-                    if stop_robot:                  # if the robot is too close to an object, stop the robot
-                        self.control_data = [0.0, 0.0]
-                        
-
-            # send the control data to the ControlStream object
-            self._send_control()
+                # send the control data to the ControlStream object
+                self._send_control()
             sleep(0.1)
+
+    def _search_for_target(self):
+        """
+        Searches for a target for a set amount of time before moving the robot to try again.
+
+        Parameters:
+            video_decision (tuple): Tuple (x, y) containing the movement controls to move to the target.
+
+        Returns:
+            bool: True if the search time has elapsed, False otherwise.
+        """
+
+        if not self.search_started:
+            self.search_start_time = time()
+            self.search_started = True
+
+        if time() - self.search_start_time < self.SEARCH_TIME: # if the search time has not elapsed, keep searching
+            video_decision = self._make_video_decision(self.target_center)
+            if video_decision == [0.0, 0.0]: # if no target is found
+                print(f"Searching for target...")
+                self.control_data = [0.5, 0.0]
+                return False
+            else: # if the target is found, go into tracking mode
+                self.mode = "track"
+                return False
+        else: # if the search time has elapsed
+            return True
+        
+    def _move_forward_seconds(self, seconds:int):
+        """
+        Moves the robot forward for a set amount of time.
+
+        Parameters:
+            seconds (int): Number of seconds to move the robot.
+        """
+        if not self.move_started:
+            self.move_start_time = time()
+            self.move_started = True
+
+        if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
+            print(f"Moving forward...")
+            self.control_data = [0.0, 0.6]
+        else: # if the move time has elapsed, go back into search mode
+            self.mode = "search"
+            self.search_started = False
 
 
     def _make_video_decision(self, target_center:list) -> list:
@@ -105,15 +178,15 @@ class DecisionMaker(ThreadedEvent):
         """
         # print(f"Target Center: {target_center}, making video decision...")
 
-        if target_center[0] == 0 and target_center[1] == 0:
+        if target_center[0] == 0 and target_center[1] == 0: # if no target is found
             return [0.0, 0.0]
         else:
             # if the target is to the right of the center, move right (divide by 960 not 480 max output of 0.5)
             if target_center[0] > 560:
-                return [(target_center[0]-480)/960, 0]
+                return [(target_center[0]-480)/960, 0.1]
             # if the target is to the left of the center, move left (divide by 960 not 480 max output of 0.5)
             elif target_center[0] <= 400:
-                return [(target_center[0]-480)/960, 0]
+                return [(target_center[0]-480)/960, 0.1]
             # if the target is at the center, move forward
             else:
                 return [0.0, 0.4]
@@ -142,7 +215,7 @@ class DecisionMaker(ThreadedEvent):
             for point in lidar_scan_narrow:
                 # if the distance of the point is less than the threshold, it is too close to the robot
                 if point[2] < self.LIDAR_DISTANCE_THRESHOLD:
-                    print(f"Object detected at {point[2]} cm, stopping robot...")
+                    print(f"Object detected at {point[2]} mm, stopping robot...")
                     return True
                 
             # if no object is too close to the robot

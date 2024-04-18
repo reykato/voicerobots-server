@@ -54,6 +54,7 @@ class VideoStreamHandler(ThreadedEvent):
             frame_info (dict): Information about the frame to be received.
         """
         if frame_info is not None:
+            print("receiving video packets")
             # Get the number of packets to be received
             packs_incoming = frame_info["packs"]
 
@@ -143,8 +144,6 @@ class VideoStreamHandler(ThreadedEvent):
         Returns the latest frame generated from the video stream.
         """
         return_value = self.frame if self.frame_is_new else None
-        if self.frame_is_new:
-            print("frame returned")
         self.frame_is_new = False
         return return_value
     

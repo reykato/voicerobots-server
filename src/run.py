@@ -32,7 +32,7 @@ def gen_video_frame():
     while True:
         frame = vsh.get_frame()
         if frame is not None and type(frame) == np.ndarray:
-            #print("frame get")
+            print("frame processed")
             frame_bytes = frame.tobytes()
             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')  # concat frame one by one and show result
             if cv2.waitKey(1) == 27:

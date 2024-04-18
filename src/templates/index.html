@@ -20,21 +20,21 @@
         </audio> -->
 		<div class="container">
             <div class="row">
-                <div class="col offset-lg-2">
+                <div class="col">
                     <img class="rounded img-fluid" src="{{ url_for('video_feed') }}">
                 </div>
                 <div class="col">
-                    <h1>Joystick Control</h1>
-                    <h4>overrides autonomous control</h4>
-                    <div id="joyDiv" style="width:300px;height:300px;margin:50px;"></div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="row">
-                    <div class="form-group row">
-                        <label for="exampleInputEmail1">Command</label>
-                        <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
-                        <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
+                    <div class="row">
+                        <h1>Joystick Control</h1>
+                        <h4>overrides autonomous control</h4>
+                        <div id="joyDiv" style="width:300px;height:300px;margin:50px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group row">
+                            <label for="exampleInputEmail1">Command</label>
+                            <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
+                            <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>

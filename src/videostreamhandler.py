@@ -165,9 +165,17 @@ class VideoStreamHandler(ThreadedEvent):
         return return_value
     
     def set_lower_upper(self, color:str):
+        """
+        Sets the lower and upper HSV values for the color to be detected.
+
+        Parameters:
+            color (str): The color to be detected. Ex: 'red', 'green'.
+        """
         if color == 'red':
-            self.lower = np.array([0, 120, 70])
-            self.upper = np.array([10, 255, 255])
+            # self.lower = np.array([0, 120, 70])
+            # self.upper = np.array([10, 255, 255])
+            self.lower = np.array([359, 150, 80])
+            self.upper = np.array([20, 255, 255])
         elif color == 'green':
             self.lower = np.array([40, 30, 30])
             self.upper = np.array([90, 255, 255])

@@ -25,7 +25,7 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 250
 
     # time to search for a target before moving (in seconds)
-    SEARCH_TIME = 10
+    SEARCH_TIME = 11.5
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()

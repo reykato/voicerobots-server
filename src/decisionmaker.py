@@ -27,6 +27,9 @@ class DecisionMaker(ThreadedEvent):
     # time to search for a target before moving (in seconds)
     SEARCH_TIME = 11.5
 
+    # time that the robot will wait for an object to move before giving up (in seconds)
+    GIVE_UP_TIME = 5
+
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
         self.vsh = vsh
@@ -49,7 +52,8 @@ class DecisionMaker(ThreadedEvent):
         # flag to indicate if the control data has been manually set using the joystick interface
         self.control_data_override = False
 
-        self.giveupthreshhold = 0
+        self.giveup_start_time = time()
+        self.giveup_started = False
 
         self.search_start_time = time()
         self.search_started = False
@@ -114,10 +118,19 @@ class DecisionMaker(ThreadedEvent):
                             self.search_started = False
                             stop_robot = True
                         
-                        if stop_robot: # if the robot is too close to an object, stop the robot and move
-                            self.mode = "search_move"
-                            self.control_data = [0.0, 0.0]
-                        else:
+                        if stop_robot: # if the robot is too close to an object, wait giveup time before moving and searching again
+                            if not self.giveup_started:
+                                self.giveup_start_time = time()
+                                self.giveup_started = True
+                            else:
+                                if time() - self.giveup_start_time < self.GIVE_UP_TIME:
+                                    self.control_data = [0.0, 0.0] # wait
+                                else:
+                                    self.mode = "search"
+                                    self.control_data = [0.0, 0.0]
+                                    self.giveup_started = False
+                                    self.search_started = False
+                        else: # if the robot is not too close to an object
                             if video_decision == [0.0, 0.0]: # if no target is found
                                 self.mode = "search"
                                 self.control_data = [0.0, 0.0]

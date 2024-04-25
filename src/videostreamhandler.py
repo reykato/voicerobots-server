@@ -15,7 +15,7 @@ class VideoStreamHandler(ThreadedEvent):
     """
 
     MAX_PACKET_SIZE = 65540
-    LOW_CONTOUR_AREA_THRESHOLD = 400 # target is too far to be considered
+    LOW_CONTOUR_AREA_THRESHOLD = 250 # target is too far to be considered
     HIGH_CONTOUR_AREA_THRESHOLD = 50000 # target is too close
 
     def __init__(self, host: str, port: int):

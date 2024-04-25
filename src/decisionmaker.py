@@ -239,11 +239,11 @@ class DecisionMaker(ThreadedEvent):
             return [-1, -1]
         else:
             # if the target is to the right of the center, move right (limit output by dividing by 600)
-            if target_center[0] > 450:
-                return [(target_center[0]-400)/600, 0.1]
+            if target_center[0] > 460:
+                return [(target_center[0]-400)/600, 0.2]
             # if the target is to the left of the center, move left (limit output by dividing by 600)
-            elif target_center[0] <= 350:
-                return [(target_center[0]-400)/600, 0.1]
+            elif target_center[0] <= 340:
+                return [(target_center[0]-400)/600, 0.2]
             # if the target is at the center, move forward
             else:
                 return [0.0, 0.4]

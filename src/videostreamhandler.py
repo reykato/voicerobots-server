@@ -93,6 +93,15 @@ class VideoStreamHandler(ThreadedEvent):
 
         # Convert the image to HSV
         hsv = cv2.cvtColor(image_blurred, cv2.COLOR_BGR2HSV)
+
+        # Get the RGB values of the center pixel
+        center_rgb = image[225][400]
+        print(f"RGB values of center pixel: {center_rgb}")
+
+        # Get the HSV values of the center pixel
+        center_hsv = hsv[225][400]
+        cv2.circle(image, (400, 225), 5, (255, 255, 0), -1)
+        print(f"RGB values of center pixel: {center_hsv}")
     
         # preparing the mask to overlay 
         mask = cv2.inRange(hsv, self.lower, self.upper)
@@ -119,11 +128,6 @@ class VideoStreamHandler(ThreadedEvent):
 
             # draw the contour on the image
             cv2.drawContours(image, max_contour, -1, (0,255,0), 3)
-
-            # Get the HSV values of the center pixel
-            center_rgb = image[225][400]
-            cv2.circle(image, (400, 225), 5, (255, 255, 0), -1)
-            print(f"RGB values of center pixel: {center_rgb}")
 
             if (cv2.contourArea(max_contour) >= self.LOW_CONTOUR_AREA_THRESHOLD) and (cv2.contourArea(max_contour) <= self.HIGH_CONTOUR_AREA_THRESHOLD):
                 # print(f"Max size contour area: {cv2.contourArea(max_contour)}")

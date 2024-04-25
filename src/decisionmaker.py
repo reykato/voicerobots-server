@@ -68,13 +68,6 @@ class DecisionMaker(ThreadedEvent):
     def _handle_stream(self):
         while not self.stop_event.is_set():
             if not self.control_data_override:
-                # self._make_audio_decision(self.ash.get_transcription())
-                # self.mode = self.ash.get_manual_mode()
-                # print(f"Mode set: {self.mode}")
-                # if self.mode != "":
-                #     print("Stop flag set to false")
-                #     self.stopflag = False
-
                 if not self.stopflag:
 
                     self.target_center = self.vsh.get_center()
@@ -84,21 +77,20 @@ class DecisionMaker(ThreadedEvent):
                     stop_robot = self._make_lidar_decision(self.lidar_scan)
 
                     if self.mode == "search":
-                        print("Search mode...")
-
+                        # print("Search mode...")
                         search_timed_out = self._search_for_target()
                         if search_timed_out:
                             # if no contour found during search, move the robot in a direction for x seconds
                             # assuming robot turned 450 degrees and is ready to move
                             self.mode = "search_move"
                     elif self.mode == "search_move":
-                        print("Search move mode...")
+                        # print("Search move mode...")
                         self._move_seconds(2.3, "forward")
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "search_turn":
-                        print("Search turn mode...")
+                        # print("Search turn mode...")
                         self._turn_seconds(1.5, "left")
                         if stop_robot:
                             # if the robot is too close to an object while turning, stop the robot and search immediately
@@ -133,6 +125,8 @@ class DecisionMaker(ThreadedEvent):
                                     self.search_started = False
                         else: # if the robot is not too close to an object and the target is found
                             self.control_data = video_decision
+                            self.search_started = False
+                            self.giveup_started = False
 
                 else: # if the stop flag is set, stop the robot
                     self.control_data = [0.0, 0.0]
@@ -155,7 +149,7 @@ class DecisionMaker(ThreadedEvent):
         """
 
         if not self.search_started:
-            print("Starting search...")
+            # print("Starting search...")
             self.search_start_time = time()
             self.search_started = True
 
@@ -174,7 +168,7 @@ class DecisionMaker(ThreadedEvent):
                 self.mode = "track"
                 return False
         else: # if the search time has elapsed
-            print("Search timed out, moving forward...")
+            # print("Search timed out, moving forward...")
             return True
         
     def _move_seconds(self, seconds:int, direction:str):
@@ -185,16 +179,14 @@ class DecisionMaker(ThreadedEvent):
             seconds (int): Number of seconds to move the robot.
         """
         if not self.move_started:
-            print("Starting move...")
+            # print("Starting move...")
             self.move_start_time = time()
             self.move_started = True
 
         if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
             if direction == "forward":
-                print(f"Moving forward...")
                 self.control_data = [0, 1]
             elif direction == "backward":
-                print(f"Moving backward...")
                 self.control_data = [0, -1]
         else: # if the move time has elapsed, turn the robot left
             self.search_started = False
@@ -214,16 +206,14 @@ class DecisionMaker(ThreadedEvent):
             direction (str): Direction to turn the robot ('left' or 'right').
         """
         if not self.move_started:
-            print("Starting turn...")
+            # print("Starting turn...")
             self.move_start_time = time()
             self.move_started = True
 
         if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
             if direction == "left":
-                print(f"Turning left...")
                 self.control_data = [-0.6, 0.0]
             elif direction == "right":
-                print(f"Turning right...")
                 self.control_data = [0.6, 0.0]
         else: # if the move time has elapsed, search
             self.mode = "search_move"

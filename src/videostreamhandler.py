@@ -139,6 +139,10 @@ class VideoStreamHandler(ThreadedEvent):
                 # draw a red dot at the coordinates of the center since target is too close/far
                 cv2.circle(image, (cX, cY), 5, (0, 0, 255), -1)
 
+                # Get the HSV values of the center pixel
+                center_hsv = hsv[480, 270]
+                print(f"HSV values of center pixel: {center_hsv}")
+
         else:
             self.center = [0, 0]
         

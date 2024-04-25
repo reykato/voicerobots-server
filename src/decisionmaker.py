@@ -25,7 +25,7 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 250
 
     # time to search for a target before moving (in seconds)
-    SEARCH_TIME = 9
+    SEARCH_TIME = 11
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
@@ -86,22 +86,18 @@ class DecisionMaker(ThreadedEvent):
                             # if no contour found during search, move the robot in a direction for x seconds
                             # assuming robot turned 450 degrees and is ready to move
                             self.mode = "search_move"
-
                     elif self.mode == "search_move":
                         print("Search move mode...")
-                        self._move_forward_seconds(3)
+                        self._move_seconds(3, "forward")
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
-                        # self.mode = "search"
                     elif self.mode == "search_turn":
                         print("Search turn mode...")
-                        self._turn_seconds(2.2, "left")
+                        self._turn_seconds(2.1, "left")
                         if stop_robot:
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
-                        # self.mode = "search"
-
                     elif self.mode == "voice":
                         self.control_data = self._scan_audio_direction(self.ash.get_transcription())
                         if stop_robot: # if the robot is too close to an object, stop the robot
@@ -170,7 +166,7 @@ class DecisionMaker(ThreadedEvent):
             print("Search timed out, moving forward...")
             return True
         
-    def _move_forward_seconds(self, seconds:int):
+    def _move_seconds(self, seconds:int, direction:str):
         """
         Moves the robot forward for a set amount of time.
 
@@ -183,8 +179,12 @@ class DecisionMaker(ThreadedEvent):
             self.move_started = True
 
         if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
-            print(f"Moving forward...")
-            self.control_data = [0.0, 1]
+            if direction == "forward":
+                print(f"Moving forward...")
+                self.control_data = [0, 1]
+            elif direction == "backward":
+                print(f"Moving backward...")
+                self.control_data = [0, -1]
         else: # if the move time has elapsed, turn the robot left
             self.search_started = False
             self.move_started = False
@@ -210,8 +210,8 @@ class DecisionMaker(ThreadedEvent):
             elif direction == "right":
                 print(f"Turning right...")
                 self.control_data = [0.6, 0.0]
-        else: # if the move time has elapsed, move forward again
-            self.mode = "search_move"
+        else: # if the move time has elapsed, search
+            self.mode = "search"
             self.search_started = False
             self.move_started = False
 

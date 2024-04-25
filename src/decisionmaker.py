@@ -238,12 +238,12 @@ class DecisionMaker(ThreadedEvent):
         elif target_center[0] == -1: # target is too close, pass through escape value
             return [-1, -1]
         else:
-            # if the target is to the right of the center, move right (divide by 720 not 480 so max output is 0.75)
+            # if the target is to the right of the center, move right (limit output by dividing by 550)
             if target_center[0] > 560:
-                return [(target_center[0]-480)/480, 0.1]
-            # if the target is to the left of the center, move left (divide by 720 not 480 so max output is 0.75)
+                return [(target_center[0]-450)/550, 0.1]
+            # if the target is to the left of the center, move left (limit output by dividing by 550)
             elif target_center[0] <= 400:
-                return [(target_center[0]-480)/480, 0.1]
+                return [(target_center[0]-450)/550, 0.1]
             # if the target is at the center, move forward
             else:
                 return [0.0, 0.4]

@@ -95,7 +95,7 @@ class DecisionMaker(ThreadedEvent):
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "search_turn":
                         print("Search turn mode...")
-                        self._turn_seconds(1.8, "left")
+                        self._turn_seconds(1.5, "left")
                         if stop_robot:
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]

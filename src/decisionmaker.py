@@ -25,7 +25,7 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 250
 
     # time to search for a target before moving (in seconds)
-    SEARCH_TIME = 11
+    SEARCH_TIME = 10
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
@@ -95,7 +95,7 @@ class DecisionMaker(ThreadedEvent):
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "search_turn":
                         print("Search turn mode...")
-                        self._turn_seconds(2.3, "left")
+                        self._turn_seconds(2, "left")
                         if stop_robot:
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]

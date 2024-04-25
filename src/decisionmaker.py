@@ -117,8 +117,9 @@ class DecisionMaker(ThreadedEvent):
                             self.mode = "search"
                             self.search_started = False
                             stop_robot = True
-                        
-                        if stop_robot: # if the robot is too close to an object, wait giveup time before moving and searching again
+
+                        # if the robot is too close to an object, wait giveup time before moving and searching again
+                        if stop_robot or (not stop_robot and video_decision == [0.0, 0.0]): 
                             if not self.giveup_started:
                                 self.giveup_start_time = time()
                                 self.giveup_started = True
@@ -130,12 +131,8 @@ class DecisionMaker(ThreadedEvent):
                                     self.control_data = [0.0, 0.0]
                                     self.giveup_started = False
                                     self.search_started = False
-                        else: # if the robot is not too close to an object
-                            if video_decision == [0.0, 0.0]: # if no target is found
-                                self.mode = "search"
-                                self.control_data = [0.0, 0.0]
-                            else:
-                                self.control_data = video_decision
+                        else: # if the robot is not too close to an object and the target is found
+                            self.control_data = video_decision
 
                 else: # if the stop flag is set, stop the robot
                     self.control_data = [0.0, 0.0]

@@ -25,7 +25,7 @@ class DecisionMaker(ThreadedEvent):
     LIDAR_DISTANCE_THRESHOLD = 250
 
     # time to search for a target before moving (in seconds)
-    SEARCH_TIME = 10
+    SEARCH_TIME = 9
 
     def __init__(self, vsh:VideoStreamHandler, lsh:LidarStreamHandler, cs:ControlStream, ash:AudioStreamHandler):
         super().__init__()
@@ -94,6 +94,13 @@ class DecisionMaker(ThreadedEvent):
                             # if the robot is too close to an object while moving, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
                         # self.mode = "search"
+                    elif self.mode == "search_turn":
+                        print("Search turn mode...")
+                        self._turn_seconds(2.2, "left")
+                        if stop_robot:
+                            # if the robot is too close to an object while turning, stop the robot and search immediately
+                            self.control_data = [0.0, 0.0]
+                        # self.mode = "search"
 
                     elif self.mode == "voice":
                         self.control_data = self._scan_audio_direction(self.ash.get_transcription())
@@ -154,7 +161,7 @@ class DecisionMaker(ThreadedEvent):
                 self.search_started = False
                 return False
             if video_decision == [0.0, 0.0]: # if no target is found
-                self.control_data = [0.5, 0.0]
+                self.control_data = [0.4, 0.0]
                 return False
             else: # if the target is found, go into tracking mode
                 self.mode = "track"
@@ -177,12 +184,36 @@ class DecisionMaker(ThreadedEvent):
 
         if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
             print(f"Moving forward...")
-            self.control_data = [0.0, 0.8]
-        else: # if the move time has elapsed, go back into search mode
-            self.mode = "search"
+            self.control_data = [0.0, 1]
+        else: # if the move time has elapsed, turn the robot left
             self.search_started = False
             self.move_started = False
+            self.mode = "search_turn"
 
+    def _turn_seconds(self, seconds:int, direction:str):
+        """
+        Turns the robot for a set amount of time.
+
+        Parameters:
+            seconds (int): Number of seconds to turn the robot.
+            direction (str): Direction to turn the robot ('left' or 'right').
+        """
+        if not self.move_started:
+            print("Starting turn...")
+            self.move_start_time = time()
+            self.move_started = True
+
+        if time() - self.move_start_time < seconds: # if the move time has not elapsed, keep moving
+            if direction == "left":
+                print(f"Turning left...")
+                self.control_data = [-0.6, 0.0]
+            elif direction == "right":
+                print(f"Turning right...")
+                self.control_data = [0.6, 0.0]
+        else: # if the move time has elapsed, move forward again
+            self.mode = "search_move"
+            self.search_started = False
+            self.move_started = False
 
     def _make_video_decision(self, target_center:list) -> list:
         """

@@ -56,6 +56,7 @@ class DecisionMaker(ThreadedEvent):
 
         self.move_start_time = time()
         self.move_started = False
+        self.move_and_turn_done = False
 
         self.prev_control_data = [0.0, 0.0]
         
@@ -88,13 +89,13 @@ class DecisionMaker(ThreadedEvent):
                             self.mode = "search_move"
                     elif self.mode == "search_move":
                         print("Search move mode...")
-                        self._move_seconds(3, "forward")
+                        self._move_seconds(2.3, "forward")
                         if stop_robot:
                             # if the robot is too close to an object while moving, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "search_turn":
                         print("Search turn mode...")
-                        self._turn_seconds(2.1, "left")
+                        self._turn_seconds(2.3, "left")
                         if stop_robot:
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
@@ -188,7 +189,11 @@ class DecisionMaker(ThreadedEvent):
         else: # if the move time has elapsed, turn the robot left
             self.search_started = False
             self.move_started = False
-            self.mode = "search_turn"
+            if not self.move_and_turn_done:
+                self.mode = "search_turn"
+            else:
+                self.mode = "search"
+                self.move_and_turn_done = False
 
     def _turn_seconds(self, seconds:int, direction:str):
         """
@@ -211,7 +216,8 @@ class DecisionMaker(ThreadedEvent):
                 print(f"Turning right...")
                 self.control_data = [0.6, 0.0]
         else: # if the move time has elapsed, search
-            self.mode = "search"
+            self.mode = "search_move"
+            self.move_and_turn_done = True
             self.search_started = False
             self.move_started = False
 

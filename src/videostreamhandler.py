@@ -140,8 +140,8 @@ class VideoStreamHandler(ThreadedEvent):
                 cv2.circle(image, (cX, cY), 5, (0, 0, 255), -1)
 
                 # Get the HSV values of the center pixel
-                center_hsv = hsv[480, 270]
-                print(f"HSV values of center pixel: {center_hsv}")
+                center_rgb = image[480][270]
+                print(f"RGB values of center pixel: {center_rgb}")
 
         else:
             self.center = [0, 0]

@@ -32,8 +32,13 @@
                     <div class="form-group row">
                         <label for="exampleInputEmail1">Command</label>
                         <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
-                        <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
-                        <button type="button" class="audio-control" onclick="audio()">Capture Audio 10s</button>
+                        <div style="display: flexbox;">
+                            <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
+                            <button type="button" class="btn btn-primary" id="audioControl" onmousedown="audio()"
+                                onmouseup="stopAudio()" onmouseleave="stopAudio()">Capture Audio</button>
+                            <button type="button" class="btn btn-primary" id="autoSend" onclick="autoSendText()" style="background-color: rgb(223, 58, 75)">Auto Send
+                                Commands</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -60,9 +65,24 @@
         };
         var Joy = new JoyStick('joyDiv', joyParam);
 
-        
+        var autosend = false;
+        const autoSendText = () => {
+            autosend = !autosend;
+
+            if (autosend) {
+                document.getElementById("autoSend").style.backgroundColor = rgb(136, 239, 146);
+            } else {
+                document.getElementById("autoSend").style.backgroundColor = rgb(223, 58, 75);
+            }
+        }
+
+        var mediaRecorder = null;
+        var chunks = [];
+        var timeoutHandler;
         const audio = () => {
-            let chunks = [];
+            document.getElementById("audioControl").style.backgroundColor = rgb(136, 239, 146);
+
+            chunks = [];
 
             navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
 
@@ -72,7 +92,7 @@
                 };
 
                 window.MediaRecorder = OpusMediaRecorder;
-                let mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
+                mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
 
                 mediaRecorder.start(1000);
                 console.log(mediaRecorder.state)
@@ -80,11 +100,33 @@
                     // console.log("data available");
                     chunks.push(e.data);
                 };
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                    send_audio_data(chunks);
-                }, 10000)
+
+                setStop();
             })
+        }
+
+        setStop = () => {
+            timeoutHandler = setTimeout(() => {
+                if (mediaRecorder !== null) {
+                    mediaRecorder.stop();
+                    mediaRecorder = null;
+                    send_audio_data(chunks);
+                }
+                document.getElementById("audioControl").style.backgroundColor = rgb(13, 110, 253)
+            }, 10000)
+        }
+        stopAudio = () => {
+            clearTimeout(timeoutHandler)
+            if (mediaRecorder !== null) {
+                mediaRecorder.stop();
+                mediaRecorder = null;
+                send_audio_data(chunks);
+            }
+            document.getElementById("audioControl").style.backgroundColor = rgb(13, 110, 253)
+        }
+
+        function rgb(r, g, b) {
+            return ["rgb(", r, ",", g, ",", b, ")"].join("");
         }
 
         async function send_audio_data(chunks) {
@@ -98,14 +140,19 @@
                 formData.append('response_format', 'text')
 
                 const headers = new Headers()
-                headers.append('Authorization', `Bearer ${"IM NEVER PUSHING THIS API KEY"}`)
+                headers.append('Authorization', `Bearer ${"NO API KEY"}`)
 
                 fetch("https://api.openai.com/v1/audio/transcriptions", {
                     method: 'POST',
                     body: formData,
                     headers: headers
                 }).then(response => {
-                    response.text().then((result) => document.getElementById("textInput").value = result)
+                    response.text().then((result) => {
+                        document.getElementById("textInput").value = result;
+                        if (autosend) {
+                            submitText();
+                        }
+                    })
                     console.log(response);
                     return response;
                 }).catch(error => console.error(error))

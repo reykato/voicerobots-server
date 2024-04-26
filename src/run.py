@@ -91,16 +91,23 @@ def submit_text():
         text = data.get('text')
         if text:
             print(f"Text received: {text}")
-            dm.stopflag = False if text != "stop" else True
+            dm.stopflag = False if text.__contains__("stop") else True
 
-            if text[0:6] == "search":
-                print(f"Setting search color to: {text[7:]}")
-                vsh.set_lower_upper(text[7:])
+            if text.__contains__("search"):
+                if text.__contains__("green"):
+                    print(f"Setting search color to: green")
+                    vsh.set_lower_upper("green")
+                elif text.__contains__("red"):
+                    print(f"Setting search color to: red")
+                    vsh.set_lower_upper("red")
                 dm.mode = "search"
                 dm.control_data_override = False
                 ash.manual_text = "search"
-            else:
-                dm.mode = text
+                dm.fullcommand = text
+            elif text.__contains__("voice"):
+                dm.mode = "voice"
+                dm.control_data_override = False
+                dm.fullcommand = text
             
             
     return '', 200

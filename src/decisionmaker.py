@@ -64,6 +64,8 @@ class DecisionMaker(ThreadedEvent):
 
         self.prev_control_data = [0.0, 0.0]
         
+        self.fullcommand = ""
+        
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
@@ -96,7 +98,7 @@ class DecisionMaker(ThreadedEvent):
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "voice":
-                        self.control_data = self._scan_audio_direction(self.ash.get_transcription())
+                        self.control_data = self._scan_audio_direction(self.fullcommand)
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "track":

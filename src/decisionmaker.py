@@ -119,7 +119,7 @@ class DecisionMaker(ThreadedEvent):
                             # if the robot is too close to an object while turning, stop the robot and search immediately
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "voice":
-                        self.control_data = self._scan_audio_direction(self.ash.get_transcription())
+                        self.control_data = self._scan_audio_direction(current_command)
                         if stop_robot: # if the robot is too close to an object, stop the robot
                             self.control_data = [0.0, 0.0]
                     elif self.mode == "track":
@@ -183,13 +183,11 @@ class DecisionMaker(ThreadedEvent):
                 self.stopflag = True
                 self.mode = "search"
                 self.search_started = False
-                return False
             if video_decision == [0.0, 0.0]: # if no target is found
                 self.control_data = [0.4, 0.0]
-                return False
             else: # if the target is found, go into tracking mode
                 self.mode = "track"
-                return False
+            return False
         else: # if the search time has elapsed
             # print("Search timed out, moving forward...")
             return True

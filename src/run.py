@@ -91,26 +91,40 @@ def submit_text():
         text = data.get('text')
         if text:
             print(f"Text received: {text}")
-            dm.stopflag = False if text != "stop" else True
+            text = text.split(',')
+            
+            # empty the command queue
+            while not dm.commands.empty():
+                dm.commands.get()
+            
+            for command in text:
+                time = command.split('.')[0]
+                try:
+                    time = float(time)
+                except ValueError:
+                    time = 5.0
+                dm.commands.put(tuple(time, command))
+            
+            # dm.stopflag = False if text != "stop" else True
 
-            if text[0:6] == "search":
-                print(f"Setting search color to: {text[7:]}")
-                vsh.set_lower_upper(text[7:])
-                dm.mode = "search"
-                dm.control_data_override = False
-                ash.manual_text = "search"
-            else:
-                dm.mode = text
+            # if text[0:6] == "search":
+            #     print(f"Setting search color to: {text[7:]}")
+            #     vsh.set_lower_upper(text[7:])
+            #     dm.mode = "search"
+            #     dm.control_data_override = False
+            #     ash.manual_text = "search"
+            # else:
+            #     dm.mode = text
             
             
     return '', 200
 
 def main():
     ash.start()
-    # vsh.start()
-    # lsh.start()
-    # cs.start()
-    # dm.start()
+    vsh.start()
+    lsh.start()
+    cs.start()
+    dm.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False, ssl_context=("cert.pem", "key.pem"))
 
 if __name__ == "__main__":

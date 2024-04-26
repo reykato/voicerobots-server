@@ -5,6 +5,7 @@ from videostreamhandler import VideoStreamHandler
 from controlstream import ControlStream
 from lidarstreamhandler import LidarStreamHandler
 from audiostreamhandler import AudioStreamHandler
+from queue import Queue
 
 
 class DecisionMaker(ThreadedEvent):
@@ -40,6 +41,7 @@ class DecisionMaker(ThreadedEvent):
         # holds current robot operating mode
         self.mode:str = 'search'
         
+        # holds stop mode flag
         self.stopflag:bool = True
 
         # hold the most recent frame from video, control tuple from joystick, and lidar scan
@@ -64,10 +66,33 @@ class DecisionMaker(ThreadedEvent):
 
         self.prev_control_data = [0.0, 0.0]
         
+        self.commands = Queue()
+        
+    def getcurrent(self):
+        if not self.commands.empty():
+            if (self.mode == "voice" or self.mode == "search" or self.commands.queue[0][1].__contains__("stop")):
+                self.commands.queue[0][0] -= 0.1
+                
+            current_time = self.commands.queue[0][0]
+            current_command = self.commands.queue[0][1]
+            
+            if current_time <= 0:
+                self.commands.get()
+                current_time, current_command = self.getcurrent()
+
+            return current_time, current_command
+        else:
+            return 0.1, "stop"
 
     def _handle_stream(self):
         while not self.stop_event.is_set():
             if not self.control_data_override:
+                
+                current_time, current_command = self.getcurrent()
+                
+                if (self.mode == "voice" or self.mode == "search" or self.commands.queue[0][1].__contains__("stop")):
+                    self._make_audio_decision(current_command)
+                
                 if not self.stopflag:
 
                     self.target_center = self.vsh.get_center()
@@ -278,17 +303,20 @@ class DecisionMaker(ThreadedEvent):
             # if no object is too close to the robot
             return False
         
-    def _make_audio_decision(self, recent_audio:str):
+    def _make_audio_decision(self, recent_audio):
         # print("Recent Audio:" + recent_audio)
+        
         if recent_audio.__contains__("stop"):
             self.stopflag = True
         elif recent_audio.__contains__("start"):
             self.stopflag = False
-        elif recent_audio.__contains__("search"):
+        
+        if recent_audio.__contains__("search"):
             self.mode = "search"
         elif recent_audio.__contains__("voice"):
             self.mode = "voice"
-        elif recent_audio.__contains__("green"):
+            
+        if recent_audio.__contains__("green"):
             self.vsh.set_lower_upper("green")
         elif recent_audio.__contains__("red"):
             self.vsh.set_lower_upper("red")

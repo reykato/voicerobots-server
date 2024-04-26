@@ -212,7 +212,7 @@
                             StopCommand -> stop
                             StartCommand -> start ModeCommand
                             ModeCommand -> search ColorCommand | voice DirectionalCommand
-                            ColorCommand -> red | green
+                            ColorCommand -> red | green | blue
                             DirectionalCommand -> forward | left turn | right turn | spin
 
                             Explanations of the terminals:
@@ -220,7 +220,7 @@
                             start: If the user wishes to do anything but stop the robot, the command will include start.
                             search: If the user wishes the robot to search for a target, the command will include search.
                             voice: If the user wishes to manually command the robot to move, the command will include voice.
-                            red/green: The color of the target the user wants the robot to search for.
+                            red/green/blue: The color of the target the user wants the robot to search for.
                             forward/left turn/right turn/spin: Physical movement commands. Do not default to any.
                             
                             If the user directly inputs a command, please return that command.
@@ -229,6 +229,7 @@
                             'stop'
                             'start search red'
                             'start search green'
+                            'start search blue'
                             'start voice forward'
                             'start voice left turn'
                             'start voice right turn'

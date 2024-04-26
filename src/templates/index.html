@@ -47,6 +47,8 @@
     <script src="https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js"></script>
 
     <script type="text/javascript">
+        const openaikey = "NO API KEY";
+
         var socket = io();
         socket.on('connect', function () {
             socket.emit('my event', { data: 'I\'m connected!' });
@@ -60,7 +62,7 @@
         };
         var Joy = new JoyStick('joyDiv', joyParam);
 
-        
+
         const audio = () => {
             let chunks = [];
 
@@ -98,14 +100,17 @@
                 formData.append('response_format', 'text')
 
                 const headers = new Headers()
-                headers.append('Authorization', `Bearer ${"IM NEVER PUSHING THIS API KEY"}`)
+                headers.append('Authorization', `Bearer ${openaikey}`)
 
                 fetch("https://api.openai.com/v1/audio/transcriptions", {
                     method: 'POST',
                     body: formData,
                     headers: headers
                 }).then(response => {
-                    response.text().then((result) => document.getElementById("textInput").value = result)
+                    response.text().then((result) => {
+                        document.getElementById("textInput").value = result
+                        gpt(result);
+                    })
                     console.log(response);
                     return response;
                 }).catch(error => console.error(error))
@@ -115,6 +120,53 @@
                 // console.log(blob);
                 chunks = [];
             }
+        }
+
+        async function gpt(result) {
+            const headers = new Headers()
+            headers.append('Authorization', `Bearer ${openaikey}`)
+            headers.append('Content-Type', 'application/json')
+
+            const requestBody = {
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    { role: 'system', content: `You are aiding in the process of running a robot using natural langauge. 
+                            You will receive a command from a user directed to the robot, and you will parse it into a command that the robot can accept. 
+                            You will intuit the semantic meaning of the user's command to produce an appropriate command.
+                            The format of the commands you will output is exactly created by the following CFG: 
+
+                            Command -> StopCommand | StartCommand
+                            StopCommand -> stop
+                            StartCommand -> start ModeCommand
+                            ModeCommand -> search ColorCommand | voice DirectionalCommand
+                            ColorCommand -> red | green
+                            DirectionalCommand -> forward | left turn | right turn | spin
+
+                            Explanations of the terminals:
+                            stop: If the user wishes to stop the robot, the command will only be stop. 
+                            start: If the user wishes to do anything but stop the robot, the command will include start.
+                            search: If the user wishes the robot to search for a target, the command will include search.
+                            voice: If the user wishes to manually command the robot to move, the command will include voice.
+                            red/green: The color of the target the user wants the robot to search for. Default to green.
+                            forward/left turn/right turn/spin: Physical movement commands. Do not default to any.
+                            
+                            For the system's benefit, only output the command or list of commands and no extra tokens. Thanks!`},
+                    { role: 'user', content: result }
+                ],
+                max_tokens: 100
+            }
+
+            fetch("https://api.openai.com/v1/chat/completions", {
+                method: 'POST',
+                body: JSON.stringify(requestBody),
+                headers: headers
+            }).then(response => {
+                response.json().then((result) => {
+                    document.getElementById("textInput").value = result.choices[0].message.content
+                    console.log(result);
+                })
+                return response;
+            }).catch(error => console.error(error))
         }
 
 

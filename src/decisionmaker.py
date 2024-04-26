@@ -70,8 +70,7 @@ class DecisionMaker(ThreadedEvent):
         
     def getcurrent(self):
         if not self.commands.empty():
-            if (self.mode == "voice" or self.mode == "search" or self.commands.queue[0][1].__contains__("stop")):
-                self.commands.queue[0][0] -= 0.1
+            self.commands.queue[0][0] -= 0.1                
                 
             current_time = self.commands.queue[0][0]
             current_command = self.commands.queue[0][1]
@@ -88,9 +87,8 @@ class DecisionMaker(ThreadedEvent):
         while not self.stop_event.is_set():
             if not self.control_data_override:
                 
-                current_time, current_command = self.getcurrent()
-                
                 if (self.mode == "voice" or self.mode == "search" or self.commands.queue[0][1].__contains__("stop")):
+                    current_time, current_command = self.getcurrent()
                     self._make_audio_decision(current_command)
                 
                 if not self.stopflag:

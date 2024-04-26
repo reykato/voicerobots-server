@@ -33,6 +33,7 @@
                         <label for="exampleInputEmail1">Command</label>
                         <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
                         <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
+                        <button type="button" class="audio-control" onclick="audio()">Capture Audio 10s</button>
                     </div>
                 </div>
             </div>
@@ -59,28 +60,34 @@
         };
         var Joy = new JoyStick('joyDiv', joyParam);
 
-        let chunks = [];
+        
+        const audio = () => {
+            let chunks = [];
 
-        // Get audio stream from user microphone
-        navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
 
-            const workerOptions = {
-                OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
-                WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
-            };
+                const workerOptions = {
+                    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
+                    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
+                };
 
-            window.MediaRecorder = OpusMediaRecorder;
-            let mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
+                window.MediaRecorder = OpusMediaRecorder;
+                let mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
 
-            mediaRecorder.start(1000);
-            console.log(mediaRecorder.state)
-            mediaRecorder.ondataavailable = (e) => {
-                // console.log("data available");
-                chunks.push(e.data);
-            };
-        })
+                mediaRecorder.start(1000);
+                console.log(mediaRecorder.state)
+                mediaRecorder.ondataavailable = (e) => {
+                    // console.log("data available");
+                    chunks.push(e.data);
+                };
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    send_audio_data(chunks);
+                }, 10000)
+            })
+        }
 
-        async function send_audio_data() {
+        async function send_audio_data(chunks) {
             if (chunks.length !== 0) {
                 const blob = new Blob(chunks, { mimeType: 'audio/webm' });
                 const audioFile = new File([blob], 'recording.webm', { mimeType: 'audio/webm' });
@@ -110,7 +117,6 @@
             }
         }
 
-        setInterval(send_audio_data, 10000); // Send audio data every 5s
 
         function send_joystick_data() {
             var entry = {

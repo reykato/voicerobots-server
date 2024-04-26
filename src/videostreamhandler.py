@@ -94,14 +94,14 @@ class VideoStreamHandler(ThreadedEvent):
         # Convert the image to HSV
         hsv = cv2.cvtColor(image_blurred, cv2.COLOR_BGR2HSV)
 
-        # Get the RGB values of the center pixel
-        center_bgr = image[225][400]
-        print(f"BGR values of center pixel: {center_bgr}")
+        # # Get the RGB values of the center pixel
+        # center_bgr = image[225][400]
+        # print(f"BGR values of center pixel: {center_bgr}")
 
-        # Get the HSV values of the center pixel
-        center_hsv = hsv[225][400]
-        cv2.circle(image, (400, 225), 5, (255, 255, 0), -1)
-        print(f"HSV values of center pixel: {center_hsv}")
+        # # Get the HSV values of the center pixel
+        # center_hsv = hsv[225][400]
+        # cv2.circle(image, (400, 225), 5, (255, 255, 0), -1)
+        # print(f"HSV values of center pixel: {center_hsv}")
     
         # preparing the mask to overlay 
         mask = cv2.inRange(hsv, self.lower, self.upper)

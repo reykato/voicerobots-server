@@ -107,10 +107,10 @@ def submit_text():
 
 def main():
     ash.start()
-    vsh.start()
-    lsh.start()
-    cs.start()
-    dm.start()
+    # vsh.start()
+    # lsh.start()
+    # cs.start()
+    # dm.start()
     flask_instance.run(host="0.0.0.0", port=80, use_reloader=False, ssl_context=("cert.pem", "key.pem"))
 
 if __name__ == "__main__":

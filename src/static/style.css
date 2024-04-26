@@ -3,13 +3,10 @@
 	box-sizing: border-box;
 } */
 
-/* body
+body
 {
-	margin: 0px;
-	padding: 0px;
-	font-family: monospace;
-  background-color: black;
-} */
+  background-color: lightslategrey
+}
 
 /* .row
 {
@@ -31,6 +28,17 @@
   min-width: 300px;
 }
 
+h1, h2, h3, h4, h5, h6, p
+{
+  color: white;
+  text-align: center;
+}
+
+label {
+  color: white;
+}
+
 #joyDiv {
-  color: black;
+  color: white;
+  text-align: center;
 }

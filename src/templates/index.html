@@ -17,23 +17,40 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="align-items: center;">
         <div class="row">
-            <div class="col">
+            <h1 class="mb-2">
+                Voice-controlled Robot
+            </h1>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row-2"><br><br><br><br></div>
+        <div class="row">
+            <div class="col-8" style="border: 1px solid lightgray; border-radius: 30px; padding: 30px">
                 <img class="rounded img-fluid" src="{{ url_for('video_feed') }}">
             </div>
-            <div class="col">
+            <div class="col-1"></div>
+            <div class="col" style="border: 1px solid lightgray; border-radius:30px">
                 <div class="row">
-                    <h1>Joystick Control</h1>
-                    <h4>overrides autonomous control</h4>
-                    <div id="joyDiv" style="width:300px;height:300px;margin:50px;"></div>
+                    <h1 class="mb-2">Joystick Control</h1>
+                    <h4 class="mb-2">overrides autonomous control</h4>
+                    <div id="joyDiv" class="row-2"></div>
                 </div>
-                <div class="row">
-                    <div class="form-group row">
-                        <label for="exampleInputEmail1">Command</label>
-                        <input type="text" class="form-control" id="textInput" placeholder="Enter Command">
-                        <button type="submit" class="btn btn-primary" onclick="submitText()">Send</button>
-                        <button type="button" class="audio-control" onclick="audio()">Capture Audio 10s</button>
+                <div class="row" style="display: flexbox; justify-content: center; padding-bottom: 30px;">
+                    <div class="row">
+                        <input type="text" class="form-control mb-2" id="textInput" placeholder="Enter Command">
+                        <button type="submit" class="btn btn-success mb-2" onclick="submitText()">Send Command</button>
+                    </div>
+                    <div class="row" style="padding:0;">
+                        <div class="col" style="padding:0;padding-left:.8rem;padding-right:.25rem;">
+                            <button type="button" class="btn btn-primary audio-control form-control"
+                                onmousedown="audio()" onmouseup="stopaudio()">Capture Audio</button>
+                        </div>
+                        <div class="col" style="padding:0;padding-right:.8rem;padding-left:.25rem;">
+                            <button type="button" class="btn btn-danger form-control" onclick="send_stop()">Stop
+                                Robot</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -47,8 +64,6 @@
     <script src="https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/encoderWorker.umd.js"></script>
 
     <script type="text/javascript">
-        const openaikey = "NO API KEY";
-
         var socket = io();
         socket.on('connect', function () {
             socket.emit('my event', { data: 'I\'m connected!' });
@@ -58,117 +73,11 @@
             "title": "joystick",
             internalFillColor: '#00b2d1',
             internalStrokeColor: '#008096',
-            externalStrokeColor: '#FFFFFF'
+            externalStrokeColor: '#FFFFFF',
+            width: '300',
+            height: '300'
         };
         var Joy = new JoyStick('joyDiv', joyParam);
-
-
-        const audio = () => {
-            let chunks = [];
-
-            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-
-                const workerOptions = {
-                    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
-                    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
-                };
-
-                window.MediaRecorder = OpusMediaRecorder;
-                let mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
-
-                mediaRecorder.start(1000);
-                console.log(mediaRecorder.state)
-                mediaRecorder.ondataavailable = (e) => {
-                    // console.log("data available");
-                    chunks.push(e.data);
-                };
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                    send_audio_data(chunks);
-                }, 10000)
-            })
-        }
-
-        async function send_audio_data(chunks) {
-            if (chunks.length !== 0) {
-                const blob = new Blob(chunks, { mimeType: 'audio/webm' });
-                const audioFile = new File([blob], 'recording.webm', { mimeType: 'audio/webm' });
-
-                const formData = new FormData()
-                formData.append('file', audioFile)
-                formData.append('model', 'whisper-1')
-                formData.append('response_format', 'text')
-
-                const headers = new Headers()
-                headers.append('Authorization', `Bearer ${openaikey}`)
-
-                fetch("https://api.openai.com/v1/audio/transcriptions", {
-                    method: 'POST',
-                    body: formData,
-                    headers: headers
-                }).then(response => {
-                    response.text().then((result) => {
-                        document.getElementById("textInput").value = result
-                        gpt(result);
-                    })
-                    console.log(response);
-                    return response;
-                }).catch(error => console.error(error))
-
-                // socket.emit('audio', blob);
-                // console.log("audio sent");
-                // console.log(blob);
-                chunks = [];
-            }
-        }
-
-        async function gpt(result) {
-            const headers = new Headers()
-            headers.append('Authorization', `Bearer ${openaikey}`)
-            headers.append('Content-Type', 'application/json')
-
-            const requestBody = {
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: `You are aiding in the process of running a robot using natural langauge. 
-                            You will receive a command from a user directed to the robot, and you will parse it into a command that the robot can accept. 
-                            You will intuit the semantic meaning of the user's command to produce an appropriate command.
-                            The format of the commands you will output is exactly created by the following CFG: 
-
-                            Command -> StopCommand | StartCommand
-                            StopCommand -> stop
-                            StartCommand -> start ModeCommand
-                            ModeCommand -> search ColorCommand | voice DirectionalCommand
-                            ColorCommand -> red | green
-                            DirectionalCommand -> forward | left turn | right turn | spin
-
-                            Explanations of the terminals:
-                            stop: If the user wishes to stop the robot, the command will only be stop. 
-                            start: If the user wishes to do anything but stop the robot, the command will include start.
-                            search: If the user wishes the robot to search for a target, the command will include search.
-                            voice: If the user wishes to manually command the robot to move, the command will include voice.
-                            red/green: The color of the target the user wants the robot to search for. Default to green.
-                            forward/left turn/right turn/spin: Physical movement commands. Do not default to any.
-                            
-                            For the system's benefit, only output the command or list of commands and no extra tokens. Thanks!`},
-                    { role: 'user', content: result }
-                ],
-                max_tokens: 100
-            }
-
-            fetch("https://api.openai.com/v1/chat/completions", {
-                method: 'POST',
-                body: JSON.stringify(requestBody),
-                headers: headers
-            }).then(response => {
-                response.json().then((result) => {
-                    document.getElementById("textInput").value = result.choices[0].message.content
-                    console.log(result);
-                })
-                return response;
-            }).catch(error => console.error(error))
-        }
-
 
         function send_joystick_data() {
             var entry = {
@@ -197,6 +106,166 @@
         }
 
         setInterval(send_joystick_data_websocket, 100);
+
+        const openaikey = "NO API KEY";
+
+        var cleanupTimeout = null;
+        var mediaRecorder = null;
+        var chunks = null;
+        var audioActive = false;
+
+        async function audio() {
+            if (audioActive) {
+                return;
+            }
+
+            audioActive = true;
+            chunks = [];
+
+            navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+                cleanupTimeout = setTimeout(() => {
+                    cleanupTimeout = null;
+                    cleanup();
+                }, 10000)
+
+                const workerOptions = {
+                    OggOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OggOpusEncoder.wasm',
+                    WebMOpusEncoderWasmPath: 'https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/WebMOpusEncoder.wasm'
+                };
+
+                window.MediaRecorder = OpusMediaRecorder;
+                mediaRecorder = new MediaRecorder(stream, {}, workerOptions);
+
+                mediaRecorder.start(1000);
+                console.log(mediaRecorder.state)
+                mediaRecorder.ondataavailable = (e) => {
+                    // console.log("data available");
+                    chunks.push(e.data);
+                };
+            })
+        }
+
+        function stopaudio() {
+            clearTimeout(cleanupTimeout)
+            if (cleanupTimeout != null) {
+                cleanupTimeout = null;
+                cleanup();
+            }
+        }
+
+        function cleanup() {
+            mediaRecorder.stop();
+            whisper(chunks);
+            audioActive = false;
+        }
+
+        async function whisper(chunks) {
+            if (chunks.length !== 0) {
+                const blob = new Blob(chunks, { mimeType: 'audio/webm' });
+                const audioFile = new File([blob], 'recording.webm', { mimeType: 'audio/webm' });
+
+                const formData = new FormData()
+                formData.append('file', audioFile)
+                formData.append('model', 'whisper-1')
+                formData.append('response_format', 'text')
+
+                const headers = new Headers()
+                headers.append('Authorization', `Bearer ${openaikey}`)
+
+                fetch("https://api.openai.com/v1/audio/transcriptions", {
+                    method: 'POST',
+                    body: formData,
+                    headers: headers
+                }).then(response => {
+                    response.text().then((result) => {
+                        // document.getElementById("textInput").value = result
+                        gpt(result);
+                    })
+                    console.log(response);
+                    return response;
+                }).catch(error => console.error(error))
+
+                // socket.emit('audio', blob);
+                // console.log("audio sent");
+                // console.log(blob);
+                chunks = [];
+            }
+        }
+
+        async function gpt(result) {
+            const validCommands = ['stop', 'start search red', 'start search green', 'start voice forward', 'start voice left turn', 'start voice right turn', 'start voice spin']
+
+            const headers = new Headers()
+            headers.append('Authorization', `Bearer ${openaikey}`)
+            headers.append('Content-Type', 'application/json')
+
+            const requestBody = {
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    {
+                        role: 'system', content: `You are aiding in the process of running a robot using natural langauge. 
+                            You will receive a command from a user directed to the robot, and you will parse it into a command that the robot can accept. 
+                            You will intuit the semantic meaning of the user's command to produce an appropriate command.
+                            The format of the commands you will output is exactly created by the following CFG: 
+
+                            Command -> StopCommand | StartCommand
+                            StopCommand -> stop
+                            StartCommand -> start ModeCommand
+                            ModeCommand -> search ColorCommand | voice DirectionalCommand
+                            ColorCommand -> red | green
+                            DirectionalCommand -> forward | left turn | right turn | spin
+
+                            Explanations of the terminals:
+                            stop: If the user wishes to stop the robot, the command will only be stop. 
+                            start: If the user wishes to do anything but stop the robot, the command will include start.
+                            search: If the user wishes the robot to search for a target, the command will include search.
+                            voice: If the user wishes to manually command the robot to move, the command will include voice.
+                            red/green: The color of the target the user wants the robot to search for.
+                            forward/left turn/right turn/spin: Physical movement commands. Do not default to any.
+                            
+                            If the user directly inputs a command, please return that command.
+
+                            So to be clear, the valid commands are: 
+                            'stop'
+                            'start search red'
+                            'start search green'
+                            'start voice forward'
+                            'start voice left turn'
+                            'start voice right turn'
+                            'start voice spin'
+
+                            For the system's benefit, only output the command and no extra words/tokens/natural language. Thanks!`},
+                    { role: 'user', content: result }
+                ],
+                max_tokens: 100
+            }
+
+            fetch("https://api.openai.com/v1/chat/completions", {
+                method: 'POST',
+                body: JSON.stringify(requestBody),
+                headers: headers
+            }).then(response => {
+                response.json().then((result) => {
+                    try {
+                        console.log(result);
+                        text = result.choices[0].message.content;
+                        if (!validCommands.includes(text)) {
+                            text = "unrecognized command";
+                        }
+                        document.getElementById("textInput").value = text;
+                        submitText();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                })
+                return response;
+            }).catch(error => console.error(error))
+        }
+
+        function send_stop() {
+            document.getElementById("textInput").value = "stop";
+            submitText();
+        }
 
         // Handles submitting text via the textbox and submit button
         function submitText() {
